@@ -46,6 +46,7 @@ require_once 'includes/data_usage.php';
 require_once 'includes/about.php';
 require_once 'includes/openvpn.php';
 require_once 'includes/torproxy.php';
+require_once 'includes/synchrona.php';
 
 $config = getConfig();
 $output = $return = 0;
@@ -130,6 +131,9 @@ $bridgedEnabled = getBridgedState();
             </div>
           </div>
         </div>
+        <li class="nav-item">
+          <a class="nav-link" href="synchrona"><i class="fas fa-wave-square fa-fw mr-2"></i><span class="nav-label"><?php echo _("Synchrona"); ?></a>
+        </li>
         <li class="nav-item">
           <a class="nav-link" href="wlan0_info"><i class="fas fa-tachometer-alt fa-fw mr-2"></i><span class="nav-label"><?php echo _("Dashboard"); ?></span></a>
         </li>
@@ -263,6 +267,9 @@ $bridgedEnabled = getBridgedState();
         case "/save_hostapd_conf":
             SaveTORAndVPNConfig();
             break;
+        case "/synchrona":
+            DisplaySynchrona();
+            break;
         case "/theme_conf":
             DisplayThemeConfig($extraFooterScripts);
             break;
@@ -276,7 +283,7 @@ $bridgedEnabled = getBridgedState();
             DisplayAbout();
             break;
         default:
-            DisplayDashboard($extraFooterScripts);
+            DisplaySynchrona();
         }
         ?>
       </div><!-- /.container-fluid -->
