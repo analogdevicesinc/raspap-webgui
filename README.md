@@ -1,3 +1,14 @@
+## Install ADI version
+
+Install RaspAP from your device's shell prompt:
+```sh
+curl -sL https://install.raspap.com | bash -s -- --repo "analogdevicesinc/raspap-webgui" --branch synchrona_revB --yes
+```
+The [installer](https://docs.raspap.com/quick/) will complete the steps in the manual installation for you.
+
+After the reboot at the end of the installation the wireless network will be configured as an access point.
+
+
 ![](https://i.imgur.com/xeKD93p.png)
 [![Release 2.7.0](https://img.shields.io/badge/release-v2.7.0-green)](https://github.com/raspap/raspap-webgui/releases) [![Awesome](https://awesome.re/badge.svg)](https://github.com/thibmaek/awesome-raspberry-pi) [![Join Insiders](https://img.shields.io/static/v1?label=Join%20Insiders&message=%E2%9D%A4&logo=GitHub&color=ff69b4)](https://github.com/sponsors/RaspAP) ![https://travis-ci.com/github/raspap/raspap-webgui/](https://api.travis-ci.org/RaspAP/raspap-webgui.svg) [![Crowdin](https://badges.crowdin.net/raspap/localized.svg)](https://crowdin.com/project/raspap) [![Twitter URL](https://img.shields.io/twitter/url?label=%40RaspAP&logoColor=%23d8224c&url=https%3A%2F%2Ftwitter.com%2Frasp_ap)](https://twitter.com/rasp_ap) [![Subreddit subscribers](https://img.shields.io/reddit/subreddit-subscribers/RaspAP?style=social)](https://www.reddit.com/r/RaspAP/)
 
