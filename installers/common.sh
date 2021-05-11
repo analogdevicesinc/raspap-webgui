@@ -42,6 +42,7 @@ function _install_raspap() {
     _config_installation
     _update_system_packages
     _install_dependencies
+    _setup_synchrona_service
     _enable_php_lighttpd
     _create_raspap_directories
     _optimize_php
@@ -179,6 +180,35 @@ function _install_dependencies() {
     sudo pip3 install typing
     sudo pip3 install iio
     _install_status 0
+}
+
+function _setup_synchrona_service() {
+	sudo bash -c 'cat > /etc/rc.local <<- EOM
+	#!/bin/sh -e
+	#
+	# rc.local
+	#
+	# This script is executed at the end of each multiuser runlevel.
+	# Make sure that the script will "exit 0" on success or any other
+	# value on error.
+	#
+	# In order to enable or disable this script just change the execution
+	# bits.
+	#
+	# By default this script does nothing.
+
+	# Print the IP address
+	_IP=$(hostname -I) || true
+	if [ "$_IP" ]; then
+	  printf "My IP address is %s\n" "$_IP"
+	fi
+
+	uvicorn --app-dir=/var/www/html/app/python/synchrona  main:app --host 0.0.0.0 --port 8000
+
+	exit 0
+
+	EOM'
+	sudo chmod a+x /etc/rc.local
 }
 
 # Enables PHP for lighttpd and restarts service for settings to take effect
