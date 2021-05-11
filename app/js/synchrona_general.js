@@ -183,9 +183,10 @@ Buttons calls
 function btnStatusClicked() {
     getConnectionStatus()
         .then(r => {
-            if (r === true) {
+            // TODO uncomment (commented just for testing)
+            // if (r === true) {
                 fillTableData();
-            }
+            // }
         });
 }
 
