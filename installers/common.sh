@@ -42,6 +42,7 @@ function _install_raspap() {
     _config_installation
     _update_system_packages
     _install_dependencies
+    _setup_synchrona_service
     _enable_php_lighttpd
     _create_raspap_directories
     _optimize_php
@@ -185,6 +186,27 @@ function _install_dependencies() {
     sudo pip3 install git+https://github.com/teoperisanu/pyadi-jif.git --ignore-installed
 
     _install_status 0
+}
+
+function _setup_synchrona_service() {
+    sudo touch /etc/systemd/system/synchrona.service
+    sudo bash -c 'cat > /etc/systemd/system/synchrona.service <<- EOM
+    [Unit]
+    Description=Synchrona python service
+    After=network.target
+    StartLimitIntervalSec=0
+
+    [Service]
+    Type=simple
+    Restart=always
+    RestartSec=1
+    User=root
+    ExecStart=/usr/local/bin/uvicorn --app-dir=/var/www/html/app/python/synchrona  main:app --host 0.0.0.0 --port 8000
+
+    [Install]
+    WantedBy=multi-user.target
+    '
+    sudo systemctl enable synchrona
 }
 
 # Enables PHP for lighttpd and restarts service for settings to take effect
