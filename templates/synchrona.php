@@ -9,6 +9,12 @@
                             <i class="fas fa-info-circle mr-2"></i>
                         </a>
                     </div>
+                    <div class="col">
+                        <button class="btn btn-light btn-icon-split btn-sm service-status float-right" onclick="btnStatusClicked()">
+                            <span class="icon"><i id="synchronaConnectionStatus" class="fas fa-circle service-status-<?php echo ("down") ?>"></i></span>
+                            <span id="synchronaConnectionMsg" class="text service-status"><?php echo ("Disconnected") ?></span>
+                        </button>
+                    </div>
                 </div><!-- ./row -->
             </div><!-- ./card-header -->
             <div class="card-body">
