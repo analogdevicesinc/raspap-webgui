@@ -171,6 +171,19 @@ function _install_dependencies() {
     echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
     echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
     sudo apt-get install $apt_option lighttpd git hostapd dnsmasq iptables-persistent $php_package $dhcpcd_package vnstat qrencode || _install_status 1 "Unable to install dependencies"
+    # Syncrona dependencies
+    sudo apt-get install $apt_option python3-pip
+    sudo pip3 install --upgrade pip
+    sudo apt-get install libatlas-base-dev
+    sudo pip3 install uvicorn --ignore-installed
+    sudo pip3 install fastapi --ignore-installed
+    sudo pip3 install pydantic --ignore-installed
+    sudo pip3 install typing --ignore-installed
+    sudo pip3 install numpy==1.19.1 --ignore-installed
+    sudo pip3 install gekko --ignore-installed
+    sudo pip3 install git+https://github.com/analogdevicesinc/pyadi-dt.git --ignore-installed
+    sudo pip3 install git+https://github.com/teoperisanu/pyadi-jif.git --ignore-installed
+
     _install_status 0
 }
 
