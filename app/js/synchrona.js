@@ -16,6 +16,8 @@ const advancedSvgElement = document.getElementById("synchronaDiagram");
 let generalSvgDocument;
 let advancedSvgDocument;
 
+let pll2Freq;
+
 let ipAddress = location.host;
 
 let sortableList;
@@ -371,6 +373,21 @@ function updateCoarseDelay(chId, value) {
  * Fine Delay
  */
 
+function fineDelayToDTValue(v) {
+    let val = parseInt(v);
+    if (val === 0) {
+        return 0;
+    }
+    return ((val - 135)/25) + 1;
+}
+
+function fineDelayFromDTValue(val) {
+    if (val == 0) {
+        return 0;
+    }
+    return ((val - 1) * 25) + 135
+}
+
 function advancedMenuUpdateFineDelay(event) {
     let chId = event.target.id.match(/\d+/)[0];
     let value =  event.target.value;
@@ -550,8 +567,8 @@ function getChannelJSON(chId) {
         enable: document.getElementById(`enable${chId}`).checked,
         cmos: cmosVal,
         frequency: document.getElementById(`frequency_ch${chId}`).value,
-        coarse_delay: document.getElementById(`coarse_delay_ch${chId}`).value,
-        fine_delay: advancedSvgDocument.getElementById(`fine_delay_ch${chId}`).value
+        coarse_delay: (Math.round((document.getElementById(`coarse_delay_ch${chId}`).value * 2 * pll2Freq) / Math.pow(10,12), 10)),
+        fine_delay: fineDelayToDTValue(advancedSvgDocument.getElementById(`fine_delay_ch${chId}`).value)
     };
 }
 
@@ -633,23 +650,33 @@ function updateAdvancedMenu() {
     });
 }
 
+function updateCoarseDelayRange(doc, chId, pll2Freq) {
+    doc.getElementById(`coarse_delay_ch${chId}`).min = 0;
+    doc.getElementById(`coarse_delay_ch${chId}`).max = 17 * parseInt((Math.pow(10, 12)) / (2 * pll2Freq),10);
+    doc.getElementById(`coarse_delay_ch${chId}`).step = parseInt(Math.pow(10, 12) / (2 * pll2Freq), 10);
+}
+
 function updateValuesGeneral(data) {
+    pll2Freq = data["channels"][0].frequency * data["channels"][0].divider;
     for (let i = 1; i <= 14; i++) {
         let ch = data["channels"][i-1];
         enableChannelGeneral(i, ch.enable);
         updateFrequencyGeneric(document, i, String(ch.frequency));
-        updateCoarseDelayGeneric(document, i, ch.coarse_delay);
+        updateCoarseDelayGeneric(document, i, ch.coarse_delay * (parseInt((Math.pow(10, 12) / (2 * pll2Freq)), 10)));
+        updateCoarseDelayRange(document, i, pll2Freq);
     }
 }
 
 function updateValuesAdvanced(data) {
+    pll2Freq = data["channels"][0].frequency * data["channels"][0].divider;
     for (let i = 1; i <= 14; i++) {
         let ch = data["channels"][i-1];
         enableChannelGeneric(advancedSvgDocument, i, ch.enable);
         updateFrequencyGeneric(advancedSvgDocument, i, String(ch.frequency));
         updateDivider(i, ch.divider);
-        updateCoarseDelayGeneric(advancedSvgDocument, i, ch.coarse_delay);
-        updateFineDelayGeneric(advancedSvgDocument, i, ch.fine_delay);
+        updateCoarseDelayGeneric(advancedSvgDocument, i, ch.coarse_delay * (parseInt((Math.pow(10, 12) / (2 * pll2Freq)), 10)));
+        updateCoarseDelayRange(advancedSvgDocument, i, pll2Freq);
+        updateFineDelayGeneric(advancedSvgDocument, i, fineDelayFromDTValue(ch.fine_delay));
     }
     setVCXO_TCXO(data["vcxo"]);
 }

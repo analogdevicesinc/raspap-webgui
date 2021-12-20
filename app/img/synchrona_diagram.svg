@@ -24,26 +24,33 @@
     <style
        id="input_text_style">
       div {
-      font: 2px serif;
-      padding-left: 0px;
-      padding-right: 0px;
-      padding-top: 0px;
-      padding-bottom: 0px;
-      height: 95%;
-      width: 95%;
-      text-align:center;
+         font: 2px serif;
+         padding-left: 0px;
+         padding-right: 0px;
+         padding-top: 0px;
+         padding-bottom: 0px;
+         height: 95%;
+         width: 95%;
+         text-align:center;
       }
       input {
-      font: 3px serif;
-      padding-left: 1px;
-      padding-right: 0px;
-      padding-top: 0px;
-      padding-bottom: 0px;
-      height: 95%;
-      width: 95%;
-      border: none;
-      outline: none;
-
+         font: 3px serif;
+         padding-left: 1px;
+         padding-right: 0px;
+         padding-top: 0px;
+         padding-bottom: 0px;
+         height: 95%;
+         width: 95%;
+         border: none;
+         outline: none;
+      }
+      input[type=number] {
+         -moz-appearance: textfield;
+      }
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+         -webkit-appearance: none;
+         margin: 0;
       }
     </style>
     <rect
@@ -2061,8 +2068,8 @@
         <xhtml:div>
           <xhtml:input
              id="coarse_delay_ch7"
-             type="text"
-             placeholder="coarse 7" />
+             type="number"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -2085,8 +2092,11 @@
         <xhtml:div>
           <xhtml:input
              id="fine_delay_ch7"
-             type="text"
-             placeholder="fine 7" />
+             type="number"
+             min="135"
+             max="670"
+             step="25"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -2204,8 +2214,8 @@
         <xhtml:div>
           <xhtml:input
              id="coarse_delay_ch6"
-             type="text"
-             placeholder="coarse 6" />
+             type="number"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -2228,8 +2238,11 @@
         <xhtml:div>
           <xhtml:input
              id="fine_delay_ch6"
-             type="text"
-             placeholder="fine 6" />
+             type="number"
+             min="135"
+             max="670"
+             step="25"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -2348,8 +2361,8 @@
         <xhtml:div>
           <xhtml:input
              id="coarse_delay_ch8"
-             type="text"
-             placeholder="coarse 8" />
+             type="number"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -2372,8 +2385,11 @@
         <xhtml:div>
           <xhtml:input
              id="fine_delay_ch8"
-             type="text"
-             placeholder="fine 8" />
+             type="number"
+             min="135"
+             max="670"
+             step="25"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -2492,8 +2508,8 @@
         <xhtml:div>
           <xhtml:input
              id="coarse_delay_ch5"
-             type="text"
-             placeholder="coarse 5" />
+             type="number"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -2516,8 +2532,11 @@
         <xhtml:div>
           <xhtml:input
              id="fine_delay_ch5"
-             type="text"
-             placeholder="fine 5" />
+             type="number"
+             min="135"
+             max="670"
+             step="25"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -2636,8 +2655,8 @@
         <xhtml:div>
           <xhtml:input
              id="coarse_delay_ch4"
-             type="text"
-             placeholder="coarse 4" />
+             type="number"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -2660,8 +2679,11 @@
         <xhtml:div>
           <xhtml:input
              id="fine_delay_ch4"
-             type="text"
-             placeholder="fine 4" />
+             type="number"
+             min="135"
+             max="670"
+             step="25"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -2779,8 +2801,8 @@
         <xhtml:div>
           <xhtml:input
              id="coarse_delay_ch3"
-             type="text"
-             placeholder="coarse 3" />
+             type="number"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -2803,8 +2825,11 @@
         <xhtml:div>
           <xhtml:input
              id="fine_delay_ch3"
-             type="text"
-             placeholder="fine 3" />
+             type="number"
+             min="135"
+             max="670"
+             step="25"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -2900,8 +2925,11 @@
         <xhtml:div>
           <xhtml:input
              id="fine_delay_ch1"
-             type="text"
-             placeholder="fine 1" />
+             type="number"
+             min="135"
+             max="670"
+             step="25"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -3018,8 +3046,8 @@
         <xhtml:div>
           <xhtml:input
              id="coarse_delay_ch2"
-             type="text"
-             placeholder="coarse 2" />
+             type="number"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -3041,8 +3069,11 @@
         <xhtml:div>
           <xhtml:input
              id="fine_delay_ch2"
-             type="text"
-             placeholder="fine 2" />
+             type="number"
+             min="135"
+             max="670"
+             step="25"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -3160,8 +3191,8 @@
         <xhtml:div>
           <xhtml:input
              id="coarse_delay_ch9"
-             type="text"
-             placeholder="coarse 9" />
+             type="number"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -3184,8 +3215,11 @@
         <xhtml:div>
           <xhtml:input
              id="fine_delay_ch9"
-             type="text"
-             placeholder="fine 9" />
+             type="number"
+             min="135"
+             max="670"
+             step="25"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -3303,8 +3337,8 @@
         <xhtml:div>
           <xhtml:input
              id="coarse_delay_ch10"
-             type="text"
-             placeholder="coarse 10" />
+             type="number"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -3327,8 +3361,11 @@
         <xhtml:div>
           <xhtml:input
              id="fine_delay_ch10"
-             type="text"
-             placeholder="fine 10" />
+             type="number"
+             min="135"
+             max="670"
+             step="25"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -3446,8 +3483,8 @@
         <xhtml:div>
           <xhtml:input
              id="coarse_delay_ch11"
-             type="text"
-             placeholder="coarse 11" />
+             type="number"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -3470,8 +3507,11 @@
         <xhtml:div>
           <xhtml:input
              id="fine_delay_ch11"
-             type="text"
-             placeholder="fine 11" />
+             type="number"
+             min="135"
+             max="670"
+             step="25"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -3589,8 +3629,8 @@
         <xhtml:div>
           <xhtml:input
              id="coarse_delay_ch12"
-             type="text"
-             placeholder="coarse 12" />
+             type="number"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -3613,8 +3653,11 @@
         <xhtml:div>
           <xhtml:input
              id="fine_delay_ch12"
-             type="text"
-             placeholder="fine 12" />
+             type="number"
+             min="135"
+             max="670"
+             step="25"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -3732,8 +3775,8 @@
         <xhtml:div>
           <xhtml:input
              id="coarse_delay_ch13"
-             type="text"
-             placeholder="coarse 13" />
+             type="number"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -3756,8 +3799,11 @@
         <xhtml:div>
           <xhtml:input
              id="fine_delay_ch13"
-             type="text"
-             placeholder="fine 13" />
+             type="number"
+             min="135"
+             max="670"
+             step="25"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -3876,8 +3922,8 @@
         <xhtml:div>
           <xhtml:input
              id="coarse_delay_ch14"
-             type="text"
-             placeholder="coarse 14" />
+             type="number"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -3900,8 +3946,11 @@
         <xhtml:div>
           <xhtml:input
              id="fine_delay_ch14"
-             type="text"
-             placeholder="fine 14" />
+             type="number"
+             min="135"
+             max="670"
+             step="25"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
@@ -7916,8 +7965,8 @@
         <xhtml:div>
           <xhtml:input
              id="coarse_delay_ch1"
-             type="text"
-             placeholder="coarse 1" />
+             type="number"
+             value="0" />
         </xhtml:div>
       </foreignObject>
       <rect
