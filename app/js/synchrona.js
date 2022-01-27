@@ -512,11 +512,13 @@ function reloadConfig() {
             loadingButton(document.getElementById("gen_btnreconfig"), false);
             loadingButton(document.getElementById("adv_btnreconfig"), false);
             console.info('Synchrona updated');
+            getConnectionStatus();
         }).
         catch(function(error) {
             log('Reload failed', error)
             loadingButton(document.getElementById("gen_btnreconfig"), false);
             loadingButton(document.getElementById("adv_btnreconfig"), false);
+            getConnectionStatus();
         });
 }
 
@@ -587,10 +589,12 @@ function getConnectionStatus() {
             if (data.status === 'connected') {
                 connectionStatusClass += `${STATUS_CONNECTED}`;
                 document.getElementById("synchronaConnectionMsg").innerHTML = "Connected";
+                document.getElementById("debugsynchronastatusfield").innerHTML = data.message;
                 ret = true;
             } else {
                 connectionStatusClass += `${STATUS_DISCONNECTED}`;
                 document.getElementById("synchronaConnectionMsg").innerHTML = "Disconnected";
+                document.getElementById("debugsynchronastatusfield").innerHTML = "Disconnected";
             }
             document.getElementById("synchronaConnectionStatus").className = connectionStatusClass;
             return ret;

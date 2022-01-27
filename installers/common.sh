@@ -201,6 +201,10 @@ function _setup_synchrona_service() {
     Restart=always
     RestartSec=1
     User=root
+    ExecStartPre=-/usr/bin/sh -c "/usr/bin/echo 6 > /sys/class/gpio/export"
+    ExecStartPre=-/usr/bin/dtoverlay -r
+    ExecStartPre=-/usr/bin/dtoverlay /boot/overlays/rpi-ad9545-hmc7044.dtbo
+    ExecStartPre=-/usr/bin/sh /var/www/html/app/python/synchrona/rebind.sh
     ExecStart=/usr/local/bin/uvicorn --app-dir=/var/www/html/app/python/synchrona  main:app --host 0.0.0.0 --port 8000
 
     [Install]

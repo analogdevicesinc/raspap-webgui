@@ -23,6 +23,7 @@
                 <ul class="nav nav-tabs">
                     <li class="nav-item"><a class="nav-link active" href="#synchronageneral" data-toggle="tab"><?php echo _("General"); ?></a></li>
                     <li class="nav-item"><a class="nav-link" href="#synchronaadvanced" data-toggle="tab"><?php echo _("Advanced"); ?></a></li>
+                    <li class="nav-item"><a class="nav-link" href="#debug" data-toggle="tab"><?php echo _("Debug"); ?></a></li>
                 </ul>
                 <!-- /.nav-tabs -->
 
@@ -30,6 +31,7 @@
                 <div class="tab-content">
                     <?php echo renderTemplate("synchrona/general", $__template_data) ?>
                     <?php echo renderTemplate("synchrona/advanced", $__template_data) ?>
+                    <?php echo renderTemplate("synchrona/debug", $__template_data) ?>
                 </div>
                 <!-- /.tab-content -->
                 <script src="app/js/synchrona.js"></script>
