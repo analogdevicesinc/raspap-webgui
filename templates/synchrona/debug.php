@@ -19,6 +19,7 @@
         <?php echo CSRFTokenFieldTag() ?>
           <input type="submit" class="btn btn-success" value="<?php echo _("Reload data") ?>" name="reloadsynchronalog" />
           <input type="submit" class="btn btn-outline btn-primary" value="<?php echo _("Restart server"); ?>" name="restartsynchronaserver" />
+          <input type="submit" class="btn btn-outline btn-primary" value="<?php echo _("Restart devicetree"); ?>" name="restartsynchronadt" />
         </form>
     </div>
   </div>

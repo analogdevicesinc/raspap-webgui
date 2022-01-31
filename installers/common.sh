@@ -50,6 +50,7 @@ function _install_raspap() {
     _download_latest_files
     _change_file_ownership
     _create_hostapd_scripts
+    _create_synchrona_files
     _create_lighttpd_scripts
     _install_lighttpd_configs
     _move_config_file
@@ -254,6 +255,17 @@ function _create_hostapd_scripts() {
     # Make enablelog.sh and disablelog.sh not writable by www-data group.
     sudo chown -c root:root "$raspap_dir/hostapd/"*.sh || _install_status 1 "Unable change owner and/or group"
     sudo chmod 750 "$raspap_dir/hostapd/"*.sh || _install_status 1 "Unable to change file permissions"
+    _install_status 0
+}
+
+# Synchrona defaults
+function _create_synchrona_files() {
+    _install_log "Creating synchrona default location"
+    sudo mkdir -p "$raspap_dir/synchrona"
+    sudo cp "$webroot_dir/installers/rpi-ad9545-hmc7044.dtbo" "$raspap_dir/synchrona" || _install_status 1 "Unable to move synchrona default devicetree"
+    sudo cp "$webroot_dir/installers/rpi-ad9545-hmc7044.dtbo" "/boot/overlays" || _install_status 1 "Unable to move synchrona default devicetree into boot"
+
+    sudo chown -R -c $raspap_user:$raspap_user "$raspap_dir/synchrona/" || _install_status 1 "Unable change owner and/or group"
     _install_status 0
 }
 
