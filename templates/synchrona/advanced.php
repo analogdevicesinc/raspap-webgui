@@ -67,6 +67,22 @@
             <div>
                 <input type="submit" class="btn btn-warning" id="adv_btnreconfig" name="Recompute" value="<?php echo _("Reload config"); ?>" style="width: 100%; min-width: 180px; margin-bottom: 5px;"/>
             </div>
+            <div>
+                <form method="post" enctype="multipart/form-data" style="width: 100%;">
+                    <?php echo CSRFTokenFieldTag() ?>
+                    <label for="file-upload" class="btn btn-warning" style="width: 100%; margin-bottom: 5px;">
+                        <i class="fas fa-file-upload"></i> <?php echo _("Import devicetree") ?>
+                    </label>
+                    <input id="file-upload" type="file" name="synchronaimportdt" onchange="this.form.submit()" accept=".dtb,.dtbo" style="display: none;"/>
+                </form>
+            </div>
+            <div>
+                <form method="post" style="width: 100%;">
+                    <?php echo CSRFTokenFieldTag() ?>
+                    <button type="submit" name="synchronaexportdt" class="btn btn-warning" style="width: 100%; margin-bottom: 5px;">
+                    <i class="fas fa-file-download"></i> <?php echo _("Export devicetree") ?> </a>
+                </form>
+            </div>
             <label for="code"><?php echo _("Input priority"); ?></label>
             <div class="wrapper" id="sortedElement">
                 <div id="pps" class="item">

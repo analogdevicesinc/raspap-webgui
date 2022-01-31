@@ -19,6 +19,22 @@
                         value="<?php echo("Reload config"); ?>" style="width: 100%; margin-bottom: 5px;"/>
             </div>
             <div class="row">
+                <form method="post" enctype="multipart/form-data" style="width: 100%;">
+                    <?php echo CSRFTokenFieldTag() ?>
+                    <label for="file-upload" class="btn btn-warning" style="width: 100%; margin-bottom: 5px;">
+                        <i class="fas fa-file-upload"></i> <?php echo _("Import devicetree") ?>
+                    </label>
+                    <input id="file-upload" type="file" name="synchronaimportdt" onchange="this.form.submit()" accept=".dtb,.dtbo" style="display: none;"/>
+                </form>
+            </div>
+            <div class="row">
+                <form method="post" style="width: 100%;">
+                    <?php echo CSRFTokenFieldTag() ?>
+                    <button type="submit" name="synchronaexportdt" class="btn btn-warning" style="width: 100%; margin-bottom: 5px;">
+                    <i class="fas fa-file-download"></i> <?php echo _("Export devicetree") ?> </a>
+                </form>
+            </div>
+            <div class="row" style="margin-bottom: 3px;">
                 <input type="submit" class="btn btn-warning" id="btnselectall" name="SelectAllCh"
                         value="<?php echo("Select All"); ?>" />
                 <input type="submit" class="btn btn-warning" id="btnselectnone"

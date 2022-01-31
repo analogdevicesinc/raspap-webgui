@@ -2,6 +2,29 @@
 
 require_once 'includes/status_messages.php';
 
+
+if (isset($_POST['synchronaexportdt'])) {
+    $file = '/boot/overlays/rpi-ad9545-hmc7044.dtbo';
+
+    if (file_exists($file)) {
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename='.basename($file));
+        header('Content-Transfer-Encoding: binary');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($file));
+        ob_clean();
+        flush();
+        readfile($file);
+        exit;
+    } else {
+        header("HTTP/1.0 404 Not Found");
+        exit;
+    }
+}
+
 /**
  * Displays synchrona tab
  */
@@ -15,6 +38,10 @@ function DisplaySynchrona()
     if (isset($_POST['restartsynchronadt'])) {
         reloadSynchronaDevicetree($status);
     }
+    if (isset($_FILES["synchronaimportdt"]["name"])) {
+        importDevicetree();
+    }
+
     echo renderTemplate("synchrona");
 }
 
@@ -38,6 +65,15 @@ function reloadSynchronaDevicetree(&$status)
     } else {
         $status->addMessage('Synchrona devicetree failed to reload.', 'danger');
     }
+}
+
+function importDevicetree()
+{
+    $target_file = "/etc/raspap/synchrona/tmp.dtbo";
+    move_uploaded_file($_FILES["synchronaimportdt"]["tmp_name"], $target_file);
+    exec('sudo /bin/cp /etc/raspap/synchrona/tmp.dtbo /boot/overlays/rpi-ad9545-hmc7044.dtbo', $commOutput, $return);
+    applyDeviceTree();
+    exec('sudo /bin/rm /etc/raspap/synchrona/tmp.dtbo', $commOutput, $return);
 }
 
 function applyDeviceTree() {
