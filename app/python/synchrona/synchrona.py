@@ -2,12 +2,78 @@ import iio
 import adijif
 import adidt as dt
 import os
+import fdt
 import subprocess
 import copy
 
 from fdt import Property
 
 driver_modes = ["LVPECL", "LVPECL", "LVPECL", "LVPECL", "CMOS", "LVPECL", "CMOS", "LVDS", "LVDS", "LVDS", "LVDS", "CMOS", "LVPECL", "CMOS"]
+
+
+def get_devicetree_status():
+    output_dtoverlay = os.popen('dtoverlay -l').read()
+    if output_dtoverlay == 'No overlays loaded\n':
+        return '0' # No dt loaded
+    if compare_devicetrees() is False:
+        return '1' # Current dt is not loaded
+    return '2' # Dt succesfully loaded
+
+
+def compare_nodes(first_node, second_node, properties):
+    for first_prop in first_node.props:
+        if first_prop.name in properties:
+            for second_prop in second_node.props:
+                if first_prop.name == second_prop.name:
+                    if first_prop.value != second_prop.value:
+                        return False
+                    break
+    return True
+
+
+def compare_devicetrees():
+    os.system('dtc -I fs -O dtb /sys/firmware/devicetree/base > /tmp/system_dt.dtbo')
+    with open("/tmp/system_dt.dtbo", "rb") as f:
+        dtb_data_file = f.read()
+        dt_system = fdt.parse_dtb(dtb_data_file)
+    os.popen('rm /tmp/system_dt.dtbo')
+
+    with open("/boot/overlays/rpi-ad9545-hmc7044.dtbo", "rb") as f:
+        dtb_data_file = f.read()
+        dt_boot = fdt.parse_dtb(dtb_data_file)
+
+    ad9545_node_boot = dt_boot.search('ad9545@0')[1]
+    ad9545_node_system = dt_system.search('ad9545@0')[0]
+
+    ad9545_node_properties = ['assigned-clock-rates', 'clock-names', 'adi,ref-frequency-hz']
+    if compare_nodes(ad9545_node_boot, ad9545_node_system, ad9545_node_properties) is False:
+        return False
+
+    for pll_name in ['pll-clk@0', 'pll-clk@1']:
+        pllclk_boot = dt_boot.search(pll_name)[0]
+        pllclk_system = dt_system.search(pll_name)[0]
+
+        for first_node in pllclk_boot.nodes:
+            for second_node in pllclk_system.nodes:
+                if first_node.name == second_node.name:
+                    if compare_nodes(first_node, second_node, ['adi,pll-source']) is False:
+                        return False
+                    break
+
+    hmc7044_node_boot = dt_boot.search('hmc7044@1')[1]
+    hmc7044_node_system = dt_system.search('hmc7044@1')[0]
+
+    hmc7044_node_properties = ['adi,pll1-clkin-frequencies', 'clock-names', 'adi,vcxo-frequency', 'adi,pll2-output-frequency', 'clock-output-names']
+    hmc7044_channel_properties = ['adi,extended-name', 'adi,driver-impedance-mode', 'adi,driver-mode', 'adi,divider']
+
+    for first_node in hmc7044_node_boot.nodes:
+        for second_node in hmc7044_node_system.nodes:
+            if first_node.name == second_node.name:
+                if compare_nodes(first_node, second_node, hmc7044_channel_properties) is False:
+                    return False
+                break
+
+    return compare_nodes(hmc7044_node_boot, hmc7044_node_system, hmc7044_node_properties)
 
 
 def read_status():

@@ -1,5 +1,6 @@
 
 const STATUS_CONNECTED = 'service-status-up';
+const STATUS_WARN = 'service-status-warn';
 const STATUS_DISCONNECTED = 'service-status-down';
 
 const ADVANCED_CHANNEL_ENABLE_COLOR = 'rgb(44, 107, 27)';
@@ -579,6 +580,11 @@ function getConnectionStatus() {
     connectionStatusClass = connectionStatusClass.replace(`${STATUS_CONNECTED}` , '');
     connectionStatusClass = connectionStatusClass.replace(`${STATUS_DISCONNECTED}` , '');
 
+    let synchronaDtClass = document.getElementById("synchronaDtStatus").className;
+    synchronaDtClass = synchronaDtClass.replace(`${STATUS_CONNECTED}` , '');
+    synchronaDtClass = synchronaDtClass.replace(`${STATUS_WARN}` , '');
+    synchronaDtClass = synchronaDtClass.replace(`${STATUS_DISCONNECTED}` , '');
+
     return fetch(`http://${ipAddress}:8000/synchrona/status`)
         .then(handleErrors)
         .then(response => {
@@ -597,6 +603,19 @@ function getConnectionStatus() {
                 document.getElementById("debugsynchronastatusfield").innerHTML = "Disconnected";
             }
             document.getElementById("synchronaConnectionStatus").className = connectionStatusClass;
+
+            if (data.dt_status === '2') {
+                synchronaDtClass += `${STATUS_CONNECTED}`;
+                document.getElementById("synchronaDtMsg").innerHTML = "Devicetree loaded";
+            } else if (data.dt_status === '1') {
+                synchronaDtClass += `${STATUS_WARN}`;
+                document.getElementById("synchronaDtMsg").innerHTML = "The current devicetree is not loaded";
+            } else {
+                synchronaDtClass += `${STATUS_DISCONNECTED}`;
+                document.getElementById("synchronaDtMsg").innerHTML = "No devicetree loaded";
+            }
+            document.getElementById("synchronaDtStatus").className = synchronaDtClass;
+
             return ret;
         })
         .catch(error => {

@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from typing import Optional
 from typing import List
 
-from synchrona import configure_synchrona, read_channel, read_status
+from synchrona import configure_synchrona, get_devicetree_status, read_channel, read_status
 
 
 app = FastAPI()
@@ -85,9 +85,10 @@ async def get_channels():
 @app.get("/synchrona/status")
 async def get_status():
     status_msg = read_status()
+    dt_status = get_devicetree_status()
     if status_msg is None:
-        return {"status": "disconnected", "message": "none"}
-    return {"status": "connected", "message": status_msg}
+        return {"status": "disconnected", "message": "none", "dt_status": dt_status}
+    return {"status": "connected", "message": status_msg, "dt_status": dt_status}
 
 
 @app.patch("/synchrona/outputs", response_model=SynchronaConfig)
