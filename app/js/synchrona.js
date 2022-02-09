@@ -486,7 +486,33 @@ function loadingButton(element, loading) {
     }
 }
 
+function isNumeric(str) {
+    return !isNaN(str) && !isNaN(parseFloat(str))
+}
+
+function validateFields() {
+    for (let chId = 1; chId <= 14; chId++) {
+        if (!isNumeric(document.getElementById(`frequency_ch${chId}`).value)) {
+            alert(`Frequency of channel ${chId} not a number`);
+            return false;
+        }
+        if (!isNumeric(document.getElementById(`coarse_delay_ch${chId}`).value)) {
+            alert(`Coarse delay of channel ${chId} not a number`);
+            return false;
+        }
+        if (!isNumeric(advancedSvgDocument.getElementById(`fine_delay_ch${chId}`).value)) {
+            alert(`Fine delay of channel ${chId} not a number`);
+            return false;
+        }
+    }
+    return true;
+}
+
 function reloadConfig() {
+    if (!validateFields()) {
+        return;
+    }
+
     loadingButton(document.getElementById("gen_btnreconfig"), true);
     loadingButton(document.getElementById("adv_btnreconfig"), true);
 
