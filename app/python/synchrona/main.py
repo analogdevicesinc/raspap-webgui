@@ -60,6 +60,7 @@ app.add_middleware(
 class Channel(BaseModel):
     id: int
     enable: bool
+    mode: Optional[str]
     cmos: Optional[int]
     frequency: int
     divider: Optional[int]

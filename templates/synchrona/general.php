@@ -57,8 +57,6 @@
             <tbody id="synchronaTableBody">
             <script>
                 let table = document.getElementById("synchronaTableBody");
-                const chMode = ['LVPECL', 'LVPECL', 'LVPECL', 'LVPECL', 'CMOS',
-                    'LVPECL', 'CMOS', 'LVDS', 'LVDS', 'LVDS', 'LVDS', 'CMOS', 'LVPECL', 'CMOS'];
                 for (let chId = 1; chId <= 14; chId++) {
                     let row = table.insertRow();
 
@@ -78,7 +76,7 @@
                     cell = row.insertCell(2);
                     input = document.createElement('label');
                     input.id = `mode${chId}`;
-                    input.textContent = chMode[chId - 1];
+                    input.textContent = '?';
                     cell.appendChild(input);
 
                     cell = row.insertCell(3);

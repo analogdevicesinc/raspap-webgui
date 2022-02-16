@@ -709,6 +709,7 @@ function updateValuesGeneral(data) {
     pll2Freq = data["channels"][0].frequency * data["channels"][0].divider;
     for (let i = 1; i <= 14; i++) {
         let ch = data["channels"][i-1];
+        document.getElementById(`mode${i}`).textContent = ch.mode;
         enableChannelGeneral(i, ch.enable);
         updateFrequencyGeneric(document, i, String(ch.frequency));
         updateCoarseDelayGeneric(document, i, ch.coarse_delay * (parseInt((Math.pow(10, 12) / (2 * pll2Freq)), 10)));

@@ -265,6 +265,8 @@ function _create_synchrona_files() {
     sudo cp "$webroot_dir/installers/rpi-ad9545-hmc7044.dtbo" "$raspap_dir/synchrona" || _install_status 1 "Unable to move synchrona default devicetree"
     sudo cp "$webroot_dir/installers/rpi-ad9545-hmc7044.dtbo" "/boot/overlays" || _install_status 1 "Unable to move synchrona default devicetree into boot"
 
+    sudo cp "$webroot_dir/installers/synchrona_ch_modes.txt" "$raspap_dir/synchrona" || _install_status 1 "Unable to move synchrona channels modes"
+
     sudo chown -R -c $raspap_user:$raspap_user "$raspap_dir/synchrona/" || _install_status 1 "Unable change owner and/or group"
     _install_status 0
 }

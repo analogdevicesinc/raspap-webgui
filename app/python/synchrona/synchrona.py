@@ -8,7 +8,7 @@ import copy
 
 from fdt import Property
 
-driver_modes = ["LVPECL", "LVPECL", "LVPECL", "LVPECL", "CMOS", "LVPECL", "CMOS", "LVDS", "LVDS", "LVDS", "LVDS", "CMOS", "LVPECL", "CMOS"]
+driver_modes = []
 
 
 def get_devicetree_status():
@@ -190,6 +190,11 @@ def convert_dt_to_ch_index(i):
     return ch_map.index(i)
 
 def read_channel():
+    global driver_modes
+    driver_modes = []
+    with open('/etc/raspap/synchrona/synchrona_ch_modes.txt', 'r') as file:
+        driver_modes = [line.rstrip() for line in file]
+
     d = dt.hmc7044_dt(dt_source="local_file", local_dt_filepath="/boot/overlays/rpi-ad9545-hmc7044.dtbo",  arch="arm")
     node = d.get_node_by_compatible("adi,hmc7044")
     node = node[0]
@@ -209,6 +214,7 @@ def read_channel():
         ch_dict["frequency"] = pll2_fr // ch_dict["divider"]
         ch_dict["coarse_delay"] = read_attr(ch_node, "adi,coarse-digital-delay")
         ch_dict["fine_delay"] = read_attr(ch_node, "adi,fine-analog-delay")
+        ch_dict["mode"] = driver_modes[i]
         channels_list.append(ch_dict)
     ret_dict["channels"] = channels_list
     ret_dict["vcxo"] = vcxo
@@ -259,8 +265,8 @@ def create_hmc7044_clock_config(config, jif_config):
 
         jif_config["output_clocks"][str(i)]["coarse-delay"] = config.channels[i-1].coarse_delay
         jif_config["output_clocks"][str(i)]["fine-delay"] = config.channels[i-1].fine_delay
-        jif_config["output_clocks"][str(i)]["driver-mode"] = driver_modes[i - 1]
-        if driver_modes[i - 1] == "CMOS":
+        jif_config["output_clocks"][str(i)]["driver-mode"] = driver_modes[convert_dt_to_ch_index(i - 1)]
+        if driver_modes[convert_dt_to_ch_index(i - 1)] == "CMOS":
             jif_config["output_clocks"][str(i)]["CMOS"] = getCMOSDict(config.channels[i-1].cmos)
 
     return jif_config
@@ -406,6 +412,12 @@ def remap_config(config):
 
 def configure_synchrona(config):
     config = remap_config(config)
+
+    global driver_modes
+    driver_modes = []
+    with open('/etc/raspap/synchrona/synchrona_ch_modes.txt', 'r') as file:
+        driver_modes = [line.rstrip() for line in file]
+
     config = hmc7044_config(config)
     if config is None:
         return config
