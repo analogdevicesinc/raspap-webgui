@@ -251,6 +251,9 @@ def create_hmc7044_clock_config(config, jif_config):
     jif_config["reference_selection_order"] = get_hmc7044_priority(config.input_priority)
 
     for i in range(1, 15):
+        if str(i) not in jif_config["output_clocks"]:
+            continue
+        jif_config["output_clocks"][str(i)]["divider"] = int(jif_config["output_clocks"][str(i)]["divider"])
         jif_config["output_clocks"][str(i)]["high-performance-mode-disable"] = True
         jif_config["output_clocks"][str(i)]["startup-mode-dynamic-enable"] = True
         jif_config["output_clocks"][str(i)]["dynamic-driver-enable"] = True
@@ -275,11 +278,15 @@ def create_hmc7044_clock_config(config, jif_config):
 def hmc7044_config(config):
     clk = adijif.hmc7044(solver="gekko")
     output_clocks = []
+    clock_names= []
+    i = 1
     for ch in config.channels:
-        output_clocks.append(ch.frequency)
+        if ch.enable:
+            output_clocks.append(ch.frequency)
+            clock_names.append(str(i))
+        i += 1
 
     output_clocks = list(map(int, output_clocks))
-    clock_names = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14"]
 
     clk.set_requested_clocks(config.vcxo, output_clocks, clock_names)
 
@@ -299,8 +306,23 @@ def hmc7044_config(config):
 
     jif_config = clk.get_config()
 
+    d = dt.hmc7044_dt(dt_source="local_file", local_dt_filepath="/boot/overlays/rpi-ad9545-hmc7044.dtbo",  arch="arm")
+    node = d.get_node_by_compatible("adi,hmc7044")
+    node = node[0]
+    pll2_fr = read_attr(node, "adi,pll2-output-frequency")
+
+    for i in range(0, 14):
+        if str(i+1) not in jif_config["output_clocks"]:
+            ch_node = node.get_subnode("channel@{0}".format(i))
+            divider = int(read_attr(ch_node, "adi,divider"))
+            jif_config["out_dividers"].insert(i, divider)
+            jif_config["output_clocks"][str(i + 1)] = {'rate': pll2_fr // divider, 'divider': divider}
+
+
     # force dividers to be int
     for i in range(0, 14):
+        if str(i+1) not in jif_config["output_clocks"]:
+            continue
         divider = int(jif_config["out_dividers"][i])
         config.channels[i].divider = divider
         jif_config["out_dividers"][i] = divider
@@ -308,11 +330,7 @@ def hmc7044_config(config):
 
     jif_config = create_hmc7044_clock_config(config, jif_config)
 
-    d = dt.hmc7044_dt(dt_source="local_file", local_dt_filepath="/boot/overlays/rpi-ad9545-hmc7044.dtbo",  arch="arm")
     dt_config = {"vcxo": config.vcxo, "clock": jif_config}
-    node = d.get_node_by_compatible("adi,hmc7044")
-
-    node = node[0]
 
     d.set_dt_node_from_config(node, dt_config)
 
