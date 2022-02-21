@@ -70,6 +70,7 @@ class Channel(BaseModel):
 
 class SynchronaConfig(BaseModel):
     vcxo: int
+    mode: Optional[str]
     input_priority: list
     channels: List[Channel]
 

@@ -41,6 +41,9 @@ function DisplaySynchrona()
     if (isset($_FILES["synchronaimportdt"]["name"])) {
         importDevicetree();
     }
+    if (isset($_POST['synchronize'])) {
+        synchronize();
+    }
 
     echo renderTemplate("synchrona");
 }
@@ -80,4 +83,8 @@ function applyDeviceTree() {
     exec('sudo /usr/bin/dtoverlay -r', $commOutput, $return);
     exec('sudo /usr/bin/dtoverlay /boot/overlays/rpi-ad9545-hmc7044.dtbo', $commOutput, $return);
     exec('sudo /usr/bin/sh /var/www/html/app/python/synchrona/rebind.sh', $commOutput, $return);
+}
+
+function synchronize() {
+    exec('sudo /usr/bin/sh -c "echo sync > /sys/bus/iio/devices/iio\:device0/sync_pin_mode"', $commOutput, $return);
 }

@@ -9,7 +9,7 @@ import copy
 from fdt import Property
 
 driver_modes = []
-
+selected_usecase = "default"
 
 def get_devicetree_status():
     output_dtoverlay = os.popen('dtoverlay -l').read()
@@ -218,6 +218,7 @@ def read_channel():
         channels_list.append(ch_dict)
     ret_dict["channels"] = channels_list
     ret_dict["vcxo"] = vcxo
+    ret_dict["mode"] = selected_usecase
     return ret_dict
 
 
@@ -396,6 +397,22 @@ def ad9545_config(config):
 
     input_refs = list(map(lambda x: (int(x[0]), int(x[1])), input_refs))  # force to be ints
     output_clocks = list(map(lambda x: (int(x[0]), int(x[1])), output_clocks))  # force to be ints
+
+    global selected_usecase
+    if config.mode == "zerodelay":
+        selected_usecase = "zerodelay"
+        clk.profiles = {
+            "dpll_0_profile_0": {"hitless" : False, "fb_source" : 0},
+            "dpll_0_profile_1": {"hitless" : False, "fb_source" : 0},
+            "dpll_0_profile_2": {"hitless" : False, "fb_source" : 0},
+            "dpll_0_profile_3": {"hitless" : False, "fb_source" : 0},
+            "dpll_1_profile_0": {"hitless" : False, "fb_source" : 0},
+            "dpll_1_profile_1": {"hitless" : False, "fb_source" : 0},
+            "dpll_1_profile_2": {"hitless" : True, "fb_source" : 6},
+            "dpll_1_profile_3": {"hitless" : True, "fb_source" : 6},
+        }
+    else:
+        selected_usecase = "default"
 
     clk.set_requested_clocks(input_refs, output_clocks)
 

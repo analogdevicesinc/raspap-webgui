@@ -555,8 +555,13 @@ function getJSON() {
         channels_data.push(getChannelJSON(chId));
     }
 
+    let usecase = "default";
+    if (document.getElementById('cbxusecase').value == "1PPS") {
+        usecase = "zerodelay";
+    }
     return JSON.stringify({
         vcxo: getVCXO(),
+        mode: usecase,
         input_priority: getInputPriority(),
         channels: channels_data,
     });
@@ -719,6 +724,15 @@ function updateValuesGeneral(data) {
 
 function updateValuesAdvanced(data) {
     pll2Freq = data["channels"][0].frequency * data["channels"][0].divider;
+
+    if (data["mode"] === "zerodelay") {
+        document.getElementById('cbxusecase').value = "1PPS";
+        changeUsecase();
+    } else {
+        document.getElementById('cbxusecase').value = "50MHz";
+        changeUsecase();
+    }
+
     for (let i = 1; i <= 14; i++) {
         let ch = data["channels"][i-1];
         enableChannelGeneric(advancedSvgDocument, i, ch.enable);
@@ -729,4 +743,33 @@ function updateValuesAdvanced(data) {
         updateFineDelayGeneric(advancedSvgDocument, i, fineDelayFromDTValue(ch.fine_delay));
     }
     setVCXO_TCXO(data["vcxo"]);
+}
+
+function setInputPriorityVisibility(id, visible) {
+    let children = document.getElementById('sortedElement').childNodes;
+    for (let x in children) {
+        if (children[x].id === id) {
+            if (visible === true) {
+                children[x].style.display = "block"
+            } else {
+                children[x].style.display = "none"
+            }
+        }
+    }
+}
+
+function changeUsecase() {
+    let usecase = document.getElementById('cbxusecase').value;
+    switch (usecase) {
+        case "50MHz":
+            setInputPriorityVisibility("ref_clk", true);
+            setInputPriorityVisibility("tcxo", true);
+            document.getElementById('synchronize').style.display = "none"
+            break;
+        case "1PPS":
+            setInputPriorityVisibility("ref_clk", false);
+            setInputPriorityVisibility("tcxo", false);
+            document.getElementById('synchronize').style.display = "block"
+            break;
+    }
 }

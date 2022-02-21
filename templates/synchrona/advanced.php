@@ -49,7 +49,7 @@
     <div class="row">
         <div class="col">
             <label for="code"><?php echo _("Diagram configuration"); ?></label>
-            <select id="cbxusecase" name="Input" class="form-control">
+            <select id="cbxusecase" name="Input" class="form-control" onchange="changeUsecase()">
                 <option value="50MHz"><?php echo _("Main Use Case"); ?></option>
                 <option value="1PPS"><?php echo _("1PPS - Zero Delay"); ?></option>
             </select>
@@ -103,7 +103,13 @@
                 </div>
             </div>
             <br>
-
+            <div>
+                <form method="post" style="width: 100%;">
+                    <?php echo CSRFTokenFieldTag() ?>
+                    <button type="submit" name="synchronize" id="synchronize" class="btn btn-warning" style="width: 100%; margin-bottom: 5px; display: none;">
+                    <?php echo _("Synchronize") ?> </a>
+                </form>
+            </div>
             <!--      JUST DEMONSTRATIVE      -->
             <div class="synchrona_input_group" id="pll1Config">
                 <h6 class="mt-1"><?php echo _("PLL1"); ?></h6>
