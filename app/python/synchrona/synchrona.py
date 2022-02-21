@@ -255,17 +255,19 @@ def create_hmc7044_clock_config(config, jif_config):
         if str(i) not in jif_config["output_clocks"]:
             continue
         jif_config["output_clocks"][str(i)]["divider"] = int(jif_config["output_clocks"][str(i)]["divider"])
-        jif_config["output_clocks"][str(i)]["high-performance-mode-disable"] = True
-        jif_config["output_clocks"][str(i)]["startup-mode-dynamic-enable"] = True
-        jif_config["output_clocks"][str(i)]["dynamic-driver-enable"] = True
-        jif_config["output_clocks"][str(i)]["force-mute-enable"] = True
+
+        # TODO: decide which proporties are valid
+        # jif_config["output_clocks"][str(i)]["high-performance-mode-disable"] = True
+        # jif_config["output_clocks"][str(i)]["startup-mode-dynamic-enable"] = True
+        # jif_config["output_clocks"][str(i)]["dynamic-driver-enable"] = True
+        # jif_config["output_clocks"][str(i)]["force-mute-enable"] = True
 
         #enable/disable fine delay
         if config.channels[i-1].fine_delay > 0:
             jif_config["output_clocks"][str(i)]["output-mux-mode"] = "ANALOG_DELAY"
         else:
             jif_config["output_clocks"][str(i)]["output-mux-mode"] = "CH_DIV"
-        jif_config["output_clocks"][str(i)]["driver_impedances"] = "100_OHM"
+        # jif_config["output_clocks"][str(i)]["driver_impedances"] = "100_OHM"
 
         jif_config["output_clocks"][str(i)]["coarse-delay"] = config.channels[i-1].coarse_delay
         jif_config["output_clocks"][str(i)]["fine-delay"] = config.channels[i-1].fine_delay
