@@ -243,7 +243,7 @@ def get_hmc7044_priority(input_priority):
     return priority
 
 
-def create_hmc7044_clock_config(config, jif_config):
+def create_hmc7044_clock_config(config, jif_config, node):
     if config.vcxo == 100000000:
         jif_config["reference_frequencies"] = [25000000, 25000000, 25000000, 40000000]
     else:
@@ -251,29 +251,37 @@ def create_hmc7044_clock_config(config, jif_config):
 
     jif_config["reference_selection_order"] = get_hmc7044_priority(config.input_priority)
 
-    for i in range(1, 15):
-        if str(i) not in jif_config["output_clocks"]:
-            continue
-        jif_config["output_clocks"][str(i)]["divider"] = int(jif_config["output_clocks"][str(i)]["divider"])
+    pll2_fr = read_attr(node, "adi,pll2-output-frequency")
 
-        # TODO: decide which proporties are valid
-        # jif_config["output_clocks"][str(i)]["high-performance-mode-disable"] = True
-        # jif_config["output_clocks"][str(i)]["startup-mode-dynamic-enable"] = True
-        # jif_config["output_clocks"][str(i)]["dynamic-driver-enable"] = True
-        # jif_config["output_clocks"][str(i)]["force-mute-enable"] = True
+    for i in range(0, 14):
+        # TODO: More properties to add?!
+
+        if str(i + 1) not in jif_config["output_clocks"]:
+            ch_node = node.get_subnode("channel@{0}".format(i))
+            divider = int(read_attr(ch_node, "adi,divider"))
+            jif_config["out_dividers"].insert(i, divider)
+            jif_config["output_clocks"][str(i + 1)] = {'rate': pll2_fr // divider, 'divider': divider}
+        else:
+            divider = int(jif_config["out_dividers"][i])
+            jif_config["out_dividers"][i] = divider
+            jif_config["output_clocks"][str(i + 1)]["divider"] = divider
+
+        config.channels[convert_dt_to_ch_index(i)].divider = divider
 
         #enable/disable fine delay
-        if config.channels[i-1].fine_delay > 0:
-            jif_config["output_clocks"][str(i)]["output-mux-mode"] = "ANALOG_DELAY"
+        if config.channels[i].fine_delay > 0:
+            jif_config["output_clocks"][str(i + 1)]["output-mux-mode"] = "ANALOG_DELAY"
         else:
-            jif_config["output_clocks"][str(i)]["output-mux-mode"] = "CH_DIV"
-        # jif_config["output_clocks"][str(i)]["driver_impedances"] = "100_OHM"
+            jif_config["output_clocks"][str(i + 1)]["output-mux-mode"] = "CH_DIV"
 
-        jif_config["output_clocks"][str(i)]["coarse-delay"] = config.channels[i-1].coarse_delay
-        jif_config["output_clocks"][str(i)]["fine-delay"] = config.channels[i-1].fine_delay
-        jif_config["output_clocks"][str(i)]["driver-mode"] = driver_modes[convert_dt_to_ch_index(i - 1)]
-        if driver_modes[convert_dt_to_ch_index(i - 1)] == "CMOS":
-            jif_config["output_clocks"][str(i)]["CMOS"] = getCMOSDict(config.channels[i-1].cmos)
+        jif_config["output_clocks"][str(i + 1)]["coarse-delay"] = config.channels[i].coarse_delay
+        jif_config["output_clocks"][str(i + 1)]["fine-delay"] = config.channels[i].fine_delay
+        jif_config["output_clocks"][str(i + 1)]["driver-mode"] = driver_modes[convert_dt_to_ch_index(i)]
+        if driver_modes[convert_dt_to_ch_index(i)] == "CMOS":
+            jif_config["output_clocks"][str(i + 1)]["CMOS"] = getCMOSDict(config.channels[i].cmos)
+
+    # reorder jif_config keys so the correct nodes are set
+    jif_config["output_clocks"] = {str(k): jif_config["output_clocks"][str(k)] for k in [i for i in range(1, 15)]}
 
     return jif_config
 
@@ -283,6 +291,7 @@ def hmc7044_config(config):
     output_clocks = []
     clock_names= []
     i = 1
+
     for ch in config.channels:
         if ch.enable:
             output_clocks.append(ch.frequency)
@@ -312,32 +321,10 @@ def hmc7044_config(config):
     d = dt.hmc7044_dt(dt_source="local_file", local_dt_filepath="/boot/overlays/rpi-ad9545-hmc7044.dtbo",  arch="arm")
     node = d.get_node_by_compatible("adi,hmc7044")
     node = node[0]
-    pll2_fr = read_attr(node, "adi,pll2-output-frequency")
 
-    for i in range(0, 14):
-        if str(i+1) not in jif_config["output_clocks"]:
-            ch_node = node.get_subnode("channel@{0}".format(i))
-            divider = int(read_attr(ch_node, "adi,divider"))
-            jif_config["out_dividers"].insert(i, divider)
-            jif_config["output_clocks"][str(i + 1)] = {'rate': pll2_fr // divider, 'divider': divider}
-
-
-    # force dividers to be int
-    for i in range(0, 14):
-        if str(i+1) not in jif_config["output_clocks"]:
-            continue
-        divider = int(jif_config["out_dividers"][i])
-        config.channels[convert_dt_to_ch_index(i)].divider = divider
-        jif_config["out_dividers"][i] = divider
-        jif_config["output_clocks"][str(i+1)]["divider"] = divider
-
-    jif_config = create_hmc7044_clock_config(config, jif_config)
+    jif_config = create_hmc7044_clock_config(config, jif_config, node)
 
     dt_config = {"vcxo": config.vcxo, "clock": jif_config}
-
-    # reorder jif_config keys so the correct nodes are set
-    jif_config["output_clocks"] = {str(k): jif_config["output_clocks"][str(k)] for k in [i for i in range(1, 15)]}
-
     d.set_dt_node_from_config(node, dt_config)
 
     #enable/disable channels
