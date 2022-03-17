@@ -335,6 +335,9 @@ def hmc7044_config(config):
 
     dt_config = {"vcxo": config.vcxo, "clock": jif_config}
 
+    # reorder jif_config keys so the correct nodes are set
+    jif_config["output_clocks"] = {str(k): jif_config["output_clocks"][str(k)] for k in [i for i in range(1, 15)]}
+
     d.set_dt_node_from_config(node, dt_config)
 
     #enable/disable channels
