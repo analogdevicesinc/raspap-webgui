@@ -327,7 +327,7 @@ def hmc7044_config(config):
         if str(i+1) not in jif_config["output_clocks"]:
             continue
         divider = int(jif_config["out_dividers"][i])
-        config.channels[i].divider = divider
+        config.channels[convert_dt_to_ch_index(i)].divider = divider
         jif_config["out_dividers"][i] = divider
         jif_config["output_clocks"][str(i+1)]["divider"] = divider
 
