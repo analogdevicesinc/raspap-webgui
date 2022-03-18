@@ -182,9 +182,9 @@ function _install_dependencies() {
     sudo pip3 install pydantic --ignore-installed
     sudo pip3 install typing --ignore-installed
     sudo pip3 install numpy==1.19.1 --ignore-installed
-    sudo pip3 install gekko --ignore-installed
     sudo pip3 install git+https://github.com/analogdevicesinc/pyadi-dt.git --ignore-installed
-    sudo pip3 install git+https://github.com/teoperisanu/pyadi-jif.git --ignore-installed
+    sudo pip3 install docplex --ignore-installed
+    sudo pip3 install --index-url https://test.pypi.org/simple/ pyadi-jif[gekko]
 
     _install_status 0
 }
