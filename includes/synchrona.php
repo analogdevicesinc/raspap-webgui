@@ -82,7 +82,6 @@ function importDevicetree()
 function applyDeviceTree() {
     exec('sudo /usr/bin/dtoverlay -r', $commOutput, $return);
     exec('sudo /usr/bin/dtoverlay /boot/overlays/rpi-ad9545-hmc7044.dtbo', $commOutput, $return);
-    exec('sudo /usr/bin/sh /var/www/html/app/python/synchrona/rebind.sh', $commOutput, $return);
 }
 
 function synchronize() {

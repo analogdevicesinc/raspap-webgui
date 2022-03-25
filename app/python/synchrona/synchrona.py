@@ -460,5 +460,5 @@ def configure_synchrona(config):
         subprocess.call(["/var/www/html/app/python/synchrona/set_vcxo_pin.sh", "0"])
     else:
         subprocess.call(["/var/www/html/app/python/synchrona/set_vcxo_pin.sh", "1"])
-    subprocess.call("/var/www/html/app/python/synchrona/rebind.sh")
+
     return config
