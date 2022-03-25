@@ -174,14 +174,12 @@ function _install_dependencies() {
     echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
     sudo apt-get install $apt_option lighttpd git hostapd dnsmasq iptables-persistent $php_package $dhcpcd_package vnstat qrencode || _install_status 1 "Unable to install dependencies"
     # Syncrona dependencies
-    sudo apt-get install $apt_option python3-pip
     sudo pip3 install --upgrade pip
     sudo apt-get install libatlas-base-dev
     sudo pip3 install uvicorn --ignore-installed
     sudo pip3 install fastapi --ignore-installed
     sudo pip3 install pydantic --ignore-installed
     sudo pip3 install typing --ignore-installed
-    sudo pip3 install numpy==1.19.1 --ignore-installed
     sudo pip3 install git+https://github.com/analogdevicesinc/pyadi-dt.git --ignore-installed
     sudo pip3 install docplex --ignore-installed
     sudo pip3 install --index-url https://test.pypi.org/simple/ pyadi-jif[gekko]
@@ -217,7 +215,7 @@ function _setup_synchrona_service() {
 # Enables PHP for lighttpd and restarts service for settings to take effect
 function _enable_php_lighttpd() {
     _install_log "Enabling PHP for lighttpd"
-    sudo lighttpd-enable-mod fastcgi-php    
+    sudo lighttpd-enable-mod fastcgi-php
     sudo service lighttpd force-reload
     sudo systemctl restart lighttpd.service || _install_status 1 "Unable to restart lighttpd"
 }
@@ -248,7 +246,7 @@ function _create_hostapd_scripts() {
     _install_log "Creating hostapd logging & control scripts"
     sudo mkdir $raspap_dir/hostapd || _install_status 1 "Unable to create directory '$raspap_dir/hostapd'"
 
-    # Move logging shell scripts 
+    # Move logging shell scripts
     sudo cp "$webroot_dir/installers/"*log.sh "$raspap_dir/hostapd" || _install_status 1 "Unable to move logging scripts"
     # Move service control shell scripts
     sudo cp "$webroot_dir/installers/"service*.sh "$raspap_dir/hostapd" || _install_status 1 "Unable to move service control scripts"
