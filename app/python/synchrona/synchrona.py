@@ -135,11 +135,9 @@ def read_hmc7044_status():
 def read_hmc7044_temperature():
     for subdir, dirs, _ in os.walk('/sys/class/hwmon'):
         for dir in dirs:
-            path = os.path.join(subdir, dir, 'device/name')
-            if os.path.isfile(path) is True:
-                with open(path) as name_file:
+             with open(subdir + '/' + dir + '/' + "name") as name_file:
                     if name_file.read().strip() == 'adt7422':
-                        with open(os.path.join(subdir, dir, 'device/temp1_input')) as temp_file:
+                        with open(subdir + '/' + dir + '/' + "temp1_input") as temp_file:
                             return int(temp_file.read().strip()) / 1000
 
 
