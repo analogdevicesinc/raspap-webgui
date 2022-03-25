@@ -74,7 +74,7 @@ function _install_error() {
 function _config_uninstallation() {
     _install_log "Configure uninstall of RaspAP"
     _get_linux_distro
-    echo "Detected ${DESC}" 
+    echo "Detected ${DESC}"
     echo "RaspAP install directory: ${raspap_dir}"
     echo -n "Lighttpd install directory: ${webroot_dir}? [Y/n]: "
     read answer
@@ -211,10 +211,32 @@ function _remove_installed_packages() {
     fi
 }
 
+function _remove_synchrona() {
+    _install_log "Removing Synchrona installed packages. Remove them with care as they might be dependencies of other packages..."
+    echo -n "Remove the following installed packages? libatlas-base-dev uvicorn fastapi pydantic adidt pyadi-jif typing docplex [y/N]: "
+    read answer
+    if [ "$answer" != 'n' ] && [ "$answer" != 'N' ]; then
+        echo "Removing packages."
+        sudo apt-get remove libatlas-base-dev ||  _install_error "Unable to remove libatlas-base-dev"
+        sudo apt-get autoremove || _install_error "Unable to run apt autoremove"
+        sudo pip3 uninstall -y uvicorn fastapi pydantic adidt pyadi-jif typing docplex || _install_error "Unable to remove installed packages"
+    else
+        echo "Leaving packages installed."
+    fi
+
+    _install_log "Removing synchrona.service"
+    if [ -f /etc/systemd/system/synchrona.service ]; then
+        sudo rm /etc/systemd/system/synchrona.service || _install_error "Unable to remove synchrona.service file"
+    fi
+    sudo systemctl daemon-reload
+    sudo systemctl disable synchrona.service || _install_error "Failed to disable synchrona.service"
+    echo "Done."
+}
+
 # Removes www-data from sudoers
 function _remove_sudoers() {
     _install_log "Removing sudoers permissions"
-    echo "Removing ${raspap_sudoers}" 
+    echo "Removing ${raspap_sudoers}"
     sudo rm "$raspap_sudoers" || _install_error "Unable to remove $raspap_sudoers"
     echo "Done."
 }
@@ -241,6 +263,7 @@ function _remove_raspap() {
     _remove_raspap_directories
     _remove_lighttpd_config
     _remove_installed_packages
+    _remove_synchrona
     _remove_sudoers
     _uninstall_complete
 }
