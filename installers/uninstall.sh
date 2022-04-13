@@ -134,6 +134,12 @@ function _remove_raspap_directories() {
     if [ ! -d "$webroot_dir" ]; then
         _install_error "RaspAP Installation directory not found. Exiting."
     fi
+
+    # We need to restore the overlay before we remove the directories
+     _install_log "Restoring rpi-ad9545-hmc7044 overlay..."
+     sudo cp "$raspap_dir/synchrona/rpi-ad9545-hmc7044.dtbo" "/boot/overlays/" || \
+            _install_error "Unable to restore synchrona overlay"
+
     sudo rm -rf "$webroot_dir"/* || _install_error "Unable to remove $webroot_dir"
     sudo rm -rf "$raspap_dir" || _install_error "Unable to remove $raspap_dir"
 }

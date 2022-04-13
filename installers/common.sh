@@ -259,8 +259,9 @@ function _create_hostapd_scripts() {
 function _create_synchrona_files() {
     _install_log "Creating synchrona default location"
     sudo mkdir -p "$raspap_dir/synchrona"
-    sudo cp "$webroot_dir/installers/rpi-ad9545-hmc7044.dtbo" "$raspap_dir/synchrona" || _install_status 1 "Unable to move synchrona default devicetree"
-    sudo cp "$webroot_dir/installers/rpi-ad9545-hmc7044.dtbo" "/boot/overlays" || _install_status 1 "Unable to move synchrona default devicetree into boot"
+    # We consider the default devicetree the one that comes with the image. Otherwise we would have to maintain the same devicetre
+    # in 2 different repositories. We should restore it on the uninstall path...
+    sudo cp "/boot/overlays/rpi-ad9545-hmc7044.dtbo" "$raspap_dir/synchrona" || _install_status 1 "Unable to move synchrona default devicetree"
 
     sudo cp "$webroot_dir/installers/synchrona_ch_modes.txt" "$raspap_dir/synchrona" || _install_status 1 "Unable to move synchrona channels modes"
 
