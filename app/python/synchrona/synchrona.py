@@ -456,10 +456,8 @@ def configure_synchrona(config):
 
     ad9545_config(config)
 
-    if config.vcxo == 100000000:
-        subprocess.call(["/var/www/html/app/python/synchrona/set_vcxo_pin.sh", "0"])
-    else:
-        subprocess.call(["/var/www/html/app/python/synchrona/set_vcxo_pin.sh", "1"])
+    with open("/sys/class/gpio/gpio6/value", "w") as gpio:
+        gpio.write("0" if config.vcxo == 100000000 else "1")
 
     subprocess.call("/var/www/html/app/python/synchrona/reload_dtb.sh")
 
