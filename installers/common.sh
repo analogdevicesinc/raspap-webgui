@@ -175,7 +175,7 @@ function _install_dependencies() {
     sudo apt-get install $apt_option lighttpd git hostapd dnsmasq iptables-persistent $php_package $dhcpcd_package vnstat qrencode || _install_status 1 "Unable to install dependencies"
     # Syncrona dependencies
     sudo pip3 install --upgrade pip
-    sudo apt-get install libatlas-base-dev
+    sudo apt-get $apt_option install libatlas-base-dev
     sudo pip3 install uvicorn --ignore-installed
     sudo pip3 install fastapi --ignore-installed
     sudo pip3 install pydantic --ignore-installed
