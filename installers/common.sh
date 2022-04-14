@@ -271,6 +271,10 @@ function _create_synchrona_files() {
     sudo cp "$webroot_dir/installers/reload_dtb.sh" "$raspap_dir/synchrona/" || _install_status 1 "Unable to move reload_dtb.sh"
 
     sudo chown -R -c $raspap_user:$raspap_user "$raspap_dir/synchrona/" || _install_status 1 "Unable change owner and/or group"
+
+    # We do not want WIFI for now so blacklist the module
+    sudo bash -c 'echo "blacklist brcmfmac" > /etc/modprobe.d/blacklist-synchrona.conf'  || _install_status 1 "Unable  to blacklist wifi"
+
     _install_status 0
 }
 

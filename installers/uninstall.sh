@@ -236,6 +236,10 @@ function _remove_synchrona() {
     fi
     sudo systemctl daemon-reload
     sudo systemctl disable synchrona.service || _install_error "Failed to disable synchrona.service"
+
+    _install_log "Removing blacklist-synchrona.conf"
+    sudo rm /etc/modprobe.d/blacklist-synchrona.conf || _install_error "Failed to remove blacklist-synchrona.conf"
+
     echo "Done."
 }
 
