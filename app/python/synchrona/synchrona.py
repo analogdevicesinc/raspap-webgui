@@ -459,6 +459,6 @@ def configure_synchrona(config):
     with open("/sys/class/gpio/gpio6/value", "w") as gpio:
         gpio.write("0" if config.vcxo == 100000000 else "1")
 
-    subprocess.call("/var/www/html/app/python/synchrona/reload_dtb.sh")
+    subprocess.call("/etc/raspap/synchrona/reload_dtb.sh")
 
     return config

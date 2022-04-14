@@ -188,7 +188,11 @@ function _install_dependencies() {
 }
 
 function _setup_synchrona_service() {
-    sudo bash -c 'cat > /etc/systemd/system/synchrona.service <<- EOM
+    local tmp=$webroot_dir
+
+    export tmp
+
+    sudo -E bash -c 'cat > /etc/systemd/system/synchrona.service <<- EOM
     [Unit]
     Description=Synchrona python service
     After=network.target
@@ -202,7 +206,7 @@ function _setup_synchrona_service() {
     ExecStartPre=-/usr/bin/sh -c "/usr/bin/echo 6 > /sys/class/gpio/export"
     ExecStartPre=-/usr/bin/dtoverlay -r rpi-ad9545-hmc7044
     ExecStartPre=-/usr/bin/dtoverlay /boot/overlays/rpi-ad9545-hmc7044.dtbo
-    ExecStart=/usr/local/bin/uvicorn --app-dir=/var/www/html/app/python/synchrona  main:app --host 0.0.0.0 --port 8000
+    ExecStart=/usr/local/bin/uvicorn --app-dir=$tmp/app/python/synchrona  main:app --host 0.0.0.0 --port 8000
     ExecStopPost=-/usr/bin/sh -c "/usr/bin/echo 6 > /sys/class/gpio/unexport"
 
     [Install]
@@ -264,6 +268,7 @@ function _create_synchrona_files() {
     sudo cp "/boot/overlays/rpi-ad9545-hmc7044.dtbo" "$raspap_dir/synchrona" || _install_status 1 "Unable to move synchrona default devicetree"
 
     sudo cp "$webroot_dir/installers/synchrona_ch_modes.txt" "$raspap_dir/synchrona" || _install_status 1 "Unable to move synchrona channels modes"
+    sudo cp "$webroot_dir/installers/reload_dtb.sh" "$raspap_dir/synchrona/" || _install_status 1 "Unable to move reload_dtb.sh"
 
     sudo chown -R -c $raspap_user:$raspap_user "$raspap_dir/synchrona/" || _install_status 1 "Unable change owner and/or group"
     _install_status 0
