@@ -120,9 +120,11 @@ $bridgedEnabled = getBridgedState();
           </div>
           <div class="col-xs ml-2">
             <div class="ml-1">Status</div>
+              <?php if (RASPI_HOTSPOT_ENABLED) : ?>
             <div class="info-item-xs"><span class="icon">
               <i class="fas fa-circle <?php echo ($hostapd_led); ?>"></i></span> <?php echo _("Hotspot").' '. _($hostapd_status); ?>
             </div>
+              <?php endif; ?>
             <div class="info-item-xs"><span class="icon">
               <i class="fas fa-circle <?php echo ($memused_led); ?>"></i></span> <?php echo _("Memory Use").': '. htmlspecialchars($memused, ENT_QUOTES); ?>%
             </div>
@@ -155,7 +157,7 @@ $bridgedEnabled = getBridgedState();
           <?php if (RASPI_NETWORK_ENABLED) : ?>
         <li class="nav-item">
            <a class="nav-link" href="network_conf"><i class="fas fa-network-wired fa-fw mr-2"></i><span class="nav-label"><?php echo _("Networking"); ?></a>
-        </li> 
+        </li>
           <?php endif; ?>
           <?php if (RASPI_WIFICLIENT_ENABLED && !$bridgedEnabled) : ?>
         <li class="nav-item">
@@ -302,7 +304,7 @@ $bridgedEnabled = getBridgedState();
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top" style="display: inline;">
       <i class="fas fa-angle-up"></i>
-    </a> 
+    </a>
 
     <!-- jQuery -->
     <script src="dist/jquery/jquery.min.js"></script>
