@@ -49,6 +49,7 @@ $defaults = [
   'RASPI_VNSTAT_ENABLED' => true,
   'RASPI_SYSTEM_ENABLED' => true,
   'RASPI_MONITOR_ENABLED' => false,
+  'RASPI_WIFI_ENABLED' => true,
 
   // Locale settings
   'LOCALE_ROOT' => 'locale',

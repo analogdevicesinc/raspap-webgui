@@ -136,9 +136,11 @@ $bridgedEnabled = getBridgedState();
         <li class="nav-item">
           <a class="nav-link" href="synchrona"><i class="fas fa-wave-square fa-fw mr-2"></i><span class="nav-label"><?php echo _("Synchrona"); ?></a>
         </li>
+          <?php if (RASPI_WIFI_ENABLED) : ?>
         <li class="nav-item">
           <a class="nav-link" href="wlan0_info"><i class="fas fa-tachometer-alt fa-fw mr-2"></i><span class="nav-label"><?php echo _("Dashboard"); ?></span></a>
         </li>
+          <?php endif; ?>
           <?php if (RASPI_HOTSPOT_ENABLED) : ?>
         <li class="nav-item">
           <a class="nav-link" href="hostapd_conf"><i class="far fa-dot-circle fa-fw mr-2"></i><span class="nav-label"><?php echo _("Hotspot"); ?></a>
