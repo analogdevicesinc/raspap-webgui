@@ -773,7 +773,7 @@ function setInputPriorityVisibility(id, visible) {
     for (let x in children) {
         if (children[x].id === id) {
             if (visible === true) {
-                children[x].style.display = "block"
+                children[x].style.display = ""
             } else {
                 children[x].style.display = "none"
             }
