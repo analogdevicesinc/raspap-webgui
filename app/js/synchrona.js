@@ -647,6 +647,15 @@ function getConnectionStatus() {
             }
             document.getElementById("synchronaDtStatus").className = synchronaDtClass;
 
+            document.getElementById("synchronaRefInput").innerHTML = data.input_ref;
+
+            if (data.pll_locked) {
+                let clkRefClass = document.getElementById("synchronaRefInputStatus").className;
+
+                clkRefClass = clkRefClass.replace(`${STATUS_DISCONNECTED}` , `${STATUS_CONNECTED}`);
+                document.getElementById("synchronaRefInputStatus").className = clkRefClass;
+            }
+
             return ret;
         })
         .catch(error => {

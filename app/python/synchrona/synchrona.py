@@ -120,7 +120,46 @@ def read_status():
 
     return msg
 
+def get_input_ref_status(input_ref):
+    hmc_status = read_hmc7044_status()
 
+    if hmc_status is None:
+        return
+
+    if "PLL1 & PLL2 Locked" in hmc_status:
+        input_ref.locked = True
+
+    try:
+         hmc7044_ref = hmc_status.split("CLKIN")[1].split(" @")[0]
+    except IndexError as e:
+         print("Could not get hmc7044 reference: [" + str(e) + "]")
+         return
+
+    if hmc7044_ref == "3":
+        input_ref.ref = "TCXO"
+    elif hmc7044_ref == "1":
+        input_ref.ref = "REF_CLK"
+    elif hmc7044_ref == "2":
+        try:
+            pll0_status = read_debug_attr('/sys/kernel/debug/clk/PLL0/PLL0')
+            profile = pll0_status.split("Profile Number: ")[1].split("\n")[0]
+            dts = dt.dt(dt_source="local_file", local_dt_filepath="/boot/overlays/rpi-ad9545-hmc7044.dtbo",
+                        arch="arm")
+            ad9545 = dts.get_node_by_compatible("adi,ad9545")[0]
+            pll_node = ad9545.get_subnode("pll-clk@0")
+            pll_profile = pll_node.get_subnode("profile@" + profile)
+        except:
+            print(trace.print_exc())
+        else:
+            pll_source = read_attr(pll_profile, "adi,pll-source")
+            if pll_source == 3:
+                input_ref.ref = "PPS"
+            elif pll_source == 2:
+                input_ref.ref = "REF_IN"
+            # else just leave ref as "unknown"
+    else:
+        # Just assume we are using CLKIN0 which should never happen
+        input_ref.ref = "P_CH3"
 
 def read_hmc7044_status():
     context = iio.Context('local:')
