@@ -52,7 +52,7 @@ function restartSynchronaServer(&$status)
 {
     exec('sudo /bin/systemctl restart synchrona.service', $commOutput, $return);
     if ($return == 0) {
-        sleep(2);
+        sleep(3);
         $status->addMessage('Synchrona server restarted successfully', 'success');
     } else {
         $status->addMessage('Synchrona server failed to restart.', 'danger');
