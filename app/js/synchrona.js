@@ -722,6 +722,28 @@ function updateValuesGeneral(data) {
     }
 }
 
+function update_input_priorities(priorities) {
+    let sorted_elem = document.getElementById('sortedElement');
+
+    if (priorities.length != 4) {
+        alert("Input List must have 4 elements! Cannot update input priority list. \
+Consider restarting your devicetree in the Debug tab...");
+        return;
+    }
+
+    for (let to = 0; to < priorities.length; to++) {
+        for (let from = 0; from < sorted_elem.childElementCount && to < sorted_elem.childElementCount; from++) {
+            if (priorities[to] == sorted_elem.children[from].id && to != from) {
+                /* do the swap */
+                tmp_child = sorted_elem.children[to].cloneNode(true)
+
+                sorted_elem.children[to].replaceWith(sorted_elem.children[from])
+                sorted_elem.appendChild(tmp_child)
+            }
+        }
+    }
+}
+
 function updateValuesAdvanced(data) {
     pll2Freq = data["channels"][0].frequency * data["channels"][0].divider;
 
@@ -743,6 +765,7 @@ function updateValuesAdvanced(data) {
         updateFineDelayGeneric(advancedSvgDocument, i, fineDelayFromDTValue(ch.fine_delay));
     }
     setVCXO_TCXO(data["vcxo"]);
+    update_input_priorities(data["input_priorities"])
 }
 
 function setInputPriorityVisibility(id, visible) {

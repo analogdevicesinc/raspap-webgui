@@ -5,6 +5,7 @@ import os
 import fdt
 import subprocess
 import copy
+import traceback as trace
 
 from fdt import Property
 
@@ -187,6 +188,42 @@ def convert_dt_to_ch_index(i):
     ch_map = [8, 9, 10, 7, 11, 6, 13, 4, 12, 5, 0, 1, 3, 2]
     return ch_map.index(i)
 
+def get_input_priorities(dts, hmc7044_prio):
+    inputs = []
+
+    for i in range(0, 4):
+        ref = (hmc7044_prio >> (i * 2)) & 0x3
+        # clkin0 is not really visible to the user and should only be used as last resort,
+        # thus it should always be in priority 4 (i == 3)
+        if ref == 0:
+            continue
+        if ref == 1 or ref == 3:
+            inputs.append("ref_clk" if ref == 1 else "tcxo")
+            continue
+
+        try:
+            # ad9545
+            ad9545_ref = dict()
+            ad9545 = dts.get_node_by_compatible("adi,ad9545")[0]
+            # both pll-clk@ must be present and have the same sources and priorities. Hence, we
+            # just get the first one...
+            pll_node = ad9545.get_subnode("pll-clk@0")
+            for p in range(0, 2):
+                pll_profile = pll_node.get_subnode("profile@" + str(p))
+                pll_source = read_attr(pll_profile, "adi,pll-source")
+                pll_priority = read_attr(pll_profile, "adi,profile-priority")
+                if pll_source != 2 and pll_source != 3:
+                    # unknown source
+                    break
+                ad9545_ref["pps" if pll_source == 3 else "ref_in"] = pll_priority
+
+            inputs.append("pps" if ad9545_ref["pps"] < ad9545_ref["ref_in"] else "ref_in")
+            inputs.append("pps" if "pps" not in inputs else "ref_in")
+        except:
+             print(trace.print_exc())
+
+    return inputs
+
 def read_channel():
     global driver_modes
     driver_modes = []
@@ -198,6 +235,7 @@ def read_channel():
     node = node[0]
     vcxo = read_attr(node, "adi,vcxo-frequency")
     pll2_fr = read_attr(node, "adi,pll2-output-frequency")
+    hmc7044_prio = read_attr(node, "adi,pll1-ref-prio-ctrl")
     ret_dict = dict()
     channels_list =[]
     for i in range(0, 14):
@@ -217,6 +255,8 @@ def read_channel():
     ret_dict["channels"] = channels_list
     ret_dict["vcxo"] = vcxo
     ret_dict["mode"] = selected_usecase
+    ret_dict["input_priorities"] = get_input_priorities(d, hmc7044_prio)
+
     return ret_dict
 
 
