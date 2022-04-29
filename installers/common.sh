@@ -174,24 +174,25 @@ function _install_dependencies() {
     echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
     sudo apt-get install $apt_option lighttpd git hostapd dnsmasq iptables-persistent $php_package $dhcpcd_package vnstat qrencode || _install_status 1 "Unable to install dependencies"
     # Syncrona dependencies
-    sudo apt-get install $apt_option python3-pip
-    sudo pip3 install --upgrade pip
-    sudo apt-get install libatlas-base-dev
-    sudo pip3 install uvicorn --ignore-installed
-    sudo pip3 install fastapi --ignore-installed
-    sudo pip3 install pydantic --ignore-installed
-    sudo pip3 install typing --ignore-installed
-    sudo pip3 install numpy==1.19.1 --ignore-installed
-    sudo pip3 install gekko --ignore-installed
-    sudo pip3 install git+https://github.com/analogdevicesinc/pyadi-dt.git --ignore-installed
-    sudo pip3 install git+https://github.com/teoperisanu/pyadi-jif.git --ignore-installed
+    sudo apt-get $apt_option install libatlas-base-dev || _install_status 1 "Unable to install synchrona dependencies"
+    sudo pip3 install --upgrade pip || _install_status 1 "Unable to install synchrona dependencies"
+    sudo pip3 install uvicorn --ignore-installed || _install_status 1 "Unable to install synchrona dependencies"
+    sudo pip3 install fastapi --ignore-installed || _install_status 1 "Unable to install synchrona dependencies"
+    sudo pip3 install pydantic --ignore-installed || _install_status 1 "Unable to install synchrona dependencies"
+    sudo pip3 install typing --ignore-installed || _install_status 1 "Unable to install synchrona dependencies"
+    sudo pip3 install git+https://github.com/analogdevicesinc/pyadi-dt.git --ignore-installed || _install_status 1 "Unable to install synchrona dependencies"
+    sudo pip3 install docplex --ignore-installed || _install_status 1 "Unable to install synchrona dependencies"
+    sudo pip3 install --index-url https://test.pypi.org/simple/ pyadi-jif[gekko] || _install_status 1 "Unable to install synchrona dependencies"
 
     _install_status 0
 }
 
 function _setup_synchrona_service() {
-    sudo touch /etc/systemd/system/synchrona.service
-    sudo bash -c 'cat > /etc/systemd/system/synchrona.service <<- EOM
+    local tmp=$webroot_dir
+
+    export tmp
+
+    sudo -E bash -c 'cat > /etc/systemd/system/synchrona.service <<- EOM
     [Unit]
     Description=Synchrona python service
     After=network.target
@@ -203,10 +204,10 @@ function _setup_synchrona_service() {
     RestartSec=1
     User=root
     ExecStartPre=-/usr/bin/sh -c "/usr/bin/echo 6 > /sys/class/gpio/export"
-    ExecStartPre=-/usr/bin/dtoverlay -r
+    ExecStartPre=-/usr/bin/dtoverlay -r rpi-ad9545-hmc7044
     ExecStartPre=-/usr/bin/dtoverlay /boot/overlays/rpi-ad9545-hmc7044.dtbo
-    ExecStartPre=-/usr/bin/sh /var/www/html/app/python/synchrona/rebind.sh
-    ExecStart=/usr/local/bin/uvicorn --app-dir=/var/www/html/app/python/synchrona  main:app --host 0.0.0.0 --port 8000
+    ExecStart=/usr/local/bin/uvicorn --app-dir=$tmp/app/python/synchrona  main:app --host 0.0.0.0 --port 8000
+    ExecStopPost=-/usr/bin/sh -c "/usr/bin/echo 6 > /sys/class/gpio/unexport"
 
     [Install]
     WantedBy=multi-user.target
@@ -217,7 +218,7 @@ function _setup_synchrona_service() {
 # Enables PHP for lighttpd and restarts service for settings to take effect
 function _enable_php_lighttpd() {
     _install_log "Enabling PHP for lighttpd"
-    sudo lighttpd-enable-mod fastcgi-php    
+    sudo lighttpd-enable-mod fastcgi-php
     sudo service lighttpd force-reload
     sudo systemctl restart lighttpd.service || _install_status 1 "Unable to restart lighttpd"
 }
@@ -248,7 +249,7 @@ function _create_hostapd_scripts() {
     _install_log "Creating hostapd logging & control scripts"
     sudo mkdir $raspap_dir/hostapd || _install_status 1 "Unable to create directory '$raspap_dir/hostapd'"
 
-    # Move logging shell scripts 
+    # Move logging shell scripts
     sudo cp "$webroot_dir/installers/"*log.sh "$raspap_dir/hostapd" || _install_status 1 "Unable to move logging scripts"
     # Move service control shell scripts
     sudo cp "$webroot_dir/installers/"service*.sh "$raspap_dir/hostapd" || _install_status 1 "Unable to move service control scripts"
@@ -262,12 +263,18 @@ function _create_hostapd_scripts() {
 function _create_synchrona_files() {
     _install_log "Creating synchrona default location"
     sudo mkdir -p "$raspap_dir/synchrona"
-    sudo cp "$webroot_dir/installers/rpi-ad9545-hmc7044.dtbo" "$raspap_dir/synchrona" || _install_status 1 "Unable to move synchrona default devicetree"
-    sudo cp "$webroot_dir/installers/rpi-ad9545-hmc7044.dtbo" "/boot/overlays" || _install_status 1 "Unable to move synchrona default devicetree into boot"
+    # We consider the default devicetree the one that comes with the image. Otherwise we would have to maintain the same devicetre
+    # in 2 different repositories. We should restore it on the uninstall path...
+    sudo cp "/boot/overlays/rpi-ad9545-hmc7044.dtbo" "$raspap_dir/synchrona" || _install_status 1 "Unable to move synchrona default devicetree"
 
     sudo cp "$webroot_dir/installers/synchrona_ch_modes.txt" "$raspap_dir/synchrona" || _install_status 1 "Unable to move synchrona channels modes"
+    sudo cp "$webroot_dir/installers/reload_dtb.sh" "$raspap_dir/synchrona/" || _install_status 1 "Unable to move reload_dtb.sh"
 
     sudo chown -R -c $raspap_user:$raspap_user "$raspap_dir/synchrona/" || _install_status 1 "Unable change owner and/or group"
+
+    # We do not want WIFI for now so blacklist the module
+    sudo bash -c 'echo "blacklist brcmfmac" > /etc/modprobe.d/blacklist-synchrona.conf'  || _install_status 1 "Unable  to blacklist wifi"
+
     _install_status 0
 }
 

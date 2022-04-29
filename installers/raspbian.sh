@@ -49,8 +49,8 @@ function _parse_params() {
     # default option values
     assume_yes=0
     upgrade=0
-    ovpn_option=1
-    adblock_option=1
+    ovpn_option=0
+    adblock_option=0
     insiders=0
     acctoken=""
 

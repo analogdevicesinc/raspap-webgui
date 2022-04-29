@@ -33,8 +33,8 @@ define('RASPI_5GHZ_ISO_ALPHA2', array('NL','US'));
 define('RASPI_5GHZ_MAX_CHANNEL', 165);
 
 // Optional services, set to true to enable.
-define('RASPI_WIFICLIENT_ENABLED', true);
-define('RASPI_HOTSPOT_ENABLED', true);
+define('RASPI_WIFICLIENT_ENABLED', false);
+define('RASPI_HOTSPOT_ENABLED', false);
 define('RASPI_NETWORK_ENABLED', true);
 define('RASPI_DHCP_ENABLED', true);
 define('RASPI_ADBLOCK_ENABLED', false);
