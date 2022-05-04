@@ -19,6 +19,11 @@
                             <span class="icon"><i id="synchronaDtStatus" class="fas fa-circle service-status-<?php echo ("down") ?>"></i></span>
                             <span id="synchronaDtMsg" class="text service-status"><?php echo ("No devicetree loaded") ?></span>
                         </button>
+
+                        <button class="btn btn-light btn-icon-split btn-sm service-status float-right" onclick="btnStatusClicked()" style="margin-right: 5px;">
+                            <span class="icon"><i id="synchronaRefInputStatus" class="fas fa-circle service-status-<?php echo ("down") ?>"></i></span>
+                            <span id="synchronaRefInput" class="text service-status"><?php echo ("No input reference") ?></span>
+                        </button>
                     </div>
                 </div><!-- ./row -->
             </div><!-- ./card-header -->
