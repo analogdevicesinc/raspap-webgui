@@ -542,7 +542,7 @@ function reloadConfig() {
             getConnectionStatus();
         }).
         catch(function(error) {
-            log('Reload failed', error)
+            console.error('Reload failed', error)
             loadingButton(document.getElementById("gen_btnreconfig"), false);
             loadingButton(document.getElementById("adv_btnreconfig"), false);
             getConnectionStatus();
