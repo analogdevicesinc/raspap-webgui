@@ -529,7 +529,9 @@ function reloadConfig() {
         .then(response => response.json())
         .then(json => {
             if (json == null) {
-                alert("Invalid frequencies");
+                alert("Unknown error! No data returned from the server...");
+            } else if (json.errno_str.length) {
+                alert(json.errno_str);
             } else {
                 setVCXO_TCXO(json.vcxo);
                 for (let i = 1; i <= 14; i++) {
