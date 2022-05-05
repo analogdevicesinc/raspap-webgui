@@ -73,6 +73,7 @@ class SynchronaConfig(BaseModel):
     mode: Optional[str]
     input_priority: list
     channels: List[Channel]
+    errno_str: Optional[str]
 
 @app.get("/")
 async def read_root():

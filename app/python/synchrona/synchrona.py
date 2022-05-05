@@ -398,7 +398,8 @@ def hmc7044_config(config):
             clk.set_requested_clocks(config.vcxo, output_clocks, clock_names)
             clk.solve()
         except:
-            return None
+            config.errno_str = "Invalid Frequencies: Cannot solve HMC7044 clock configuration..."
+            return config
 
     jif_config = clk.get_config()
 
@@ -523,6 +524,7 @@ def remap_config(config):
 
 def configure_synchrona(config):
     config = remap_config(config)
+    config.errno_str = ""
 
     global driver_modes
     driver_modes = []
@@ -530,7 +532,7 @@ def configure_synchrona(config):
         driver_modes = [line.rstrip() for line in file]
 
     config = hmc7044_config(config)
-    if config is None:
+    if config.errno_str:
         return config
 
     ad9545_config(config)
