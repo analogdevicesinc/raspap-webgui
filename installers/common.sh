@@ -204,10 +204,15 @@ function _setup_synchrona_service() {
     RestartSec=1
     User=root
     ExecStartPre=-/usr/bin/sh -c "/usr/bin/echo 6 > /sys/class/gpio/export"
+    ExecStartPre=-/usr/bin/sh -c "/usr/bin/echo 12 > /sys/class/gpio/export"
+    ExecStartPre=-/usr/bin/sh -c "/usr/bin/echo 16 > /sys/class/gpio/export"
     ExecStartPre=-/usr/bin/dtoverlay -r rpi-ad9545-hmc7044
     ExecStartPre=-/usr/bin/dtoverlay /boot/overlays/rpi-ad9545-hmc7044.dtbo
     ExecStart=/usr/local/bin/uvicorn --app-dir=$tmp/app/python/synchrona  main:app --host 0.0.0.0 --port 8000
+    ExecStartPost=-/usr/bin/bash /etc/raspap/synchrona/ad-synchrona-14-leds.sh > /dev/null 2>&1 &
     ExecStopPost=-/usr/bin/sh -c "/usr/bin/echo 6 > /sys/class/gpio/unexport"
+    ExecStopPost=-/usr/bin/sh -c "/usr/bin/echo 12 > /sys/class/gpio/unexport
+    ExecStopPost=-/usr/bin/sh -c "/usr/bin/echo 16 > /sys/class/gpio/unexport
 
     [Install]
     WantedBy=multi-user.target
@@ -269,6 +274,7 @@ function _create_synchrona_files() {
 
     sudo cp "$webroot_dir/installers/synchrona_ch_modes.txt" "$raspap_dir/synchrona" || _install_status 1 "Unable to move synchrona channels modes"
     sudo cp "$webroot_dir/installers/reload_dtb.sh" "$raspap_dir/synchrona/" || _install_status 1 "Unable to move reload_dtb.sh"
+    sudo cp "$webroot_dir/installers/ad-synchrona-14-leds.sh" "$raspap_dir/synchrona/" || _install_status 1 "Unable to move ad-synchrona-14-leds.sh"
 
     sudo chown -R -c $raspap_user:$raspap_user "$raspap_dir/synchrona/" || _install_status 1 "Unable change owner and/or group"
 
