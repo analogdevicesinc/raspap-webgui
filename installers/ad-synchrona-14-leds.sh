@@ -55,6 +55,9 @@ do
 		LED_STATUS=$STATUS_RED
 	fi
 
+	echo "out" > "/sys/class/gpio/gpio$RED_LED1/direction"
+	echo "out" > "/sys/class/gpio/gpio$GREEN_LED1/direction"
+
 	if [[ $LED_STATUS == $STATUS_GREEN ]]; then
 		echo 0 > "/sys/class/gpio/gpio$RED_LED1/value"
 		echo 1 > "/sys/class/gpio/gpio$GREEN_LED1/value"
