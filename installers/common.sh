@@ -198,6 +198,8 @@ function _setup_synchrona_service() {
     [Unit]
     Description=Synchrona python service
     After=network.target
+    Wants=synchrona_leds.service
+    Before=synchrona_leds.service
     StartLimitIntervalSec=0
 
     [Service]
@@ -205,18 +207,31 @@ function _setup_synchrona_service() {
     Restart=always
     RestartSec=1
     User=root
-    ExecStartPre=-/usr/bin/sh -c "/usr/bin/echo 12 > /sys/class/gpio/export"
-    ExecStartPre=-/usr/bin/sh -c "/usr/bin/echo 16 > /sys/class/gpio/export"
     ExecStartPre=-$rasp/synchrona/reload_dtb.sh
     ExecStart=/usr/local/bin/uvicorn --app-dir=$tmp/app/python/synchrona  main:app --host 0.0.0.0 --port 8000
-    ExecStartPost=-/usr/bin/bash /etc/raspap/synchrona/ad-synchrona-14-leds.sh > /dev/null 2>&1 &
-    ExecStopPost=-/usr/bin/sh -c "/usr/bin/echo 12 > /sys/class/gpio/unexport"
-    ExecStopPost=-/usr/bin/sh -c "/usr/bin/echo 16 > /sys/class/gpio/unexport"
 
     [Install]
     WantedBy=multi-user.target
     '
+
+    sudo -E bash -c 'cat > /etc/systemd/system/synchrona_leds.service <<- EOM
+    [Unit]
+    Description=Synchrona LEDs bash service
+    After=synchrona.service
+    PartOf=synchrona.service
+    StartLimitIntervalSec=0
+
+    [Service]
+    Type=simple
+    User=root
+    ExecStart=/usr/bin/bash /etc/raspap/synchrona/ad-synchrona-14-leds.sh
+
+    [Install]
+    WantedBy=synchrona.service
+    '
+
     sudo systemctl enable synchrona
+    sudo systemctl enable synchrona_leds
 }
 
 # Enables PHP for lighttpd and restarts service for settings to take effect
