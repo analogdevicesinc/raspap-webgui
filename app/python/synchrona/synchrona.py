@@ -431,9 +431,13 @@ def hmc7044_config(config):
             n.remove_property("bias-pull-up")
         if not n.exist_property("bias-pull-down"):
             n.append(Property("bias-pull-down"))
+        if not n.exist_property("output-low"):
+            n.append(Property("output-low"))
     else:
         if n.exist_property("bias-pull-down"):
             n.remove_property("bias-pull-down")
+        if n.exist_property("output-low"):
+            n.remove_property("output-low")
         if not n.exist_property("bias-pull-up"):
             n.append(Property("bias-pull-up"))
         if not n.exist_property("output-high"):
