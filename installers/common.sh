@@ -203,14 +203,12 @@ function _setup_synchrona_service() {
     Restart=always
     RestartSec=1
     User=root
-    ExecStartPre=-/usr/bin/sh -c "/usr/bin/echo 6 > /sys/class/gpio/export"
     ExecStartPre=-/usr/bin/sh -c "/usr/bin/echo 12 > /sys/class/gpio/export"
     ExecStartPre=-/usr/bin/sh -c "/usr/bin/echo 16 > /sys/class/gpio/export"
     ExecStartPre=-/usr/bin/dtoverlay -r rpi-ad9545-hmc7044
     ExecStartPre=-/usr/bin/dtoverlay /boot/overlays/rpi-ad9545-hmc7044.dtbo
     ExecStart=/usr/local/bin/uvicorn --app-dir=$tmp/app/python/synchrona  main:app --host 0.0.0.0 --port 8000
     ExecStartPost=-/usr/bin/bash /etc/raspap/synchrona/ad-synchrona-14-leds.sh > /dev/null 2>&1 &
-    ExecStopPost=-/usr/bin/sh -c "/usr/bin/echo 6 > /sys/class/gpio/unexport"
     ExecStopPost=-/usr/bin/sh -c "/usr/bin/echo 12 > /sys/class/gpio/unexport
     ExecStopPost=-/usr/bin/sh -c "/usr/bin/echo 16 > /sys/class/gpio/unexport
 
