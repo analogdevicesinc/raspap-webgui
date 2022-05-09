@@ -189,8 +189,10 @@ function _install_dependencies() {
 
 function _setup_synchrona_service() {
     local tmp=$webroot_dir
+    local rasp=$raspap_dir
 
     export tmp
+    export rasp
 
     sudo -E bash -c 'cat > /etc/systemd/system/synchrona.service <<- EOM
     [Unit]
@@ -205,8 +207,7 @@ function _setup_synchrona_service() {
     User=root
     ExecStartPre=-/usr/bin/sh -c "/usr/bin/echo 12 > /sys/class/gpio/export"
     ExecStartPre=-/usr/bin/sh -c "/usr/bin/echo 16 > /sys/class/gpio/export"
-    ExecStartPre=-/usr/bin/dtoverlay -r rpi-ad9545-hmc7044
-    ExecStartPre=-/usr/bin/dtoverlay /boot/overlays/rpi-ad9545-hmc7044.dtbo
+    ExecStartPre=-$rasp/synchrona/reload_dtb.sh
     ExecStart=/usr/local/bin/uvicorn --app-dir=$tmp/app/python/synchrona  main:app --host 0.0.0.0 --port 8000
     ExecStartPost=-/usr/bin/bash /etc/raspap/synchrona/ad-synchrona-14-leds.sh > /dev/null 2>&1 &
     ExecStopPost=-/usr/bin/sh -c "/usr/bin/echo 12 > /sys/class/gpio/unexport
