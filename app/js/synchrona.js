@@ -529,7 +529,9 @@ function reloadConfig() {
         .then(response => response.json())
         .then(json => {
             if (json == null) {
-                alert("Invalid frequencies");
+                alert("Unknown error! No data returned from the server...");
+            } else if (json.errno_str.length) {
+                alert(json.errno_str);
             } else {
                 setVCXO_TCXO(json.vcxo);
                 for (let i = 1; i <= 14; i++) {
@@ -542,7 +544,7 @@ function reloadConfig() {
             getConnectionStatus();
         }).
         catch(function(error) {
-            log('Reload failed', error)
+            console.error('Reload failed', error)
             loadingButton(document.getElementById("gen_btnreconfig"), false);
             loadingButton(document.getElementById("adv_btnreconfig"), false);
             getConnectionStatus();
@@ -649,12 +651,13 @@ function getConnectionStatus() {
 
             document.getElementById("synchronaRefInput").innerHTML = data.input_ref;
 
+            let clkRefClass = document.getElementById("synchronaRefInputStatus").className;
             if (data.pll_locked) {
-                let clkRefClass = document.getElementById("synchronaRefInputStatus").className;
-
                 clkRefClass = clkRefClass.replace(`${STATUS_DISCONNECTED}` , `${STATUS_CONNECTED}`);
-                document.getElementById("synchronaRefInputStatus").className = clkRefClass;
+            } else {
+                clkRefClass = clkRefClass.replace(`${STATUS_CONNECTED}` , `${STATUS_DISCONNECTED}`);
             }
+            document.getElementById("synchronaRefInputStatus").className = clkRefClass;
 
             return ret;
         })

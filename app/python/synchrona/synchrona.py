@@ -12,6 +12,9 @@ from fdt import Property
 driver_modes = []
 selected_usecase = "default"
 
+class SynchronaClockError(Exception):
+    pass
+
 def get_devicetree_status():
     output_dtoverlay = os.popen('dtoverlay -l').read()
     if output_dtoverlay == 'No overlays loaded\n':
@@ -397,8 +400,8 @@ def hmc7044_config(config):
             clk = adijif.hmc7044(solver="gekko")
             clk.set_requested_clocks(config.vcxo, output_clocks, clock_names)
             clk.solve()
-        except:
-            return None
+        except Exception as e:
+            raise SynchronaClockError("Invalid Frequencies: Cannot solve HMC7044 clock configuration...") from e
 
     jif_config = clk.get_config()
 
@@ -430,9 +433,13 @@ def hmc7044_config(config):
             n.remove_property("bias-pull-up")
         if not n.exist_property("bias-pull-down"):
             n.append(Property("bias-pull-down"))
+        if not n.exist_property("output-low"):
+            n.append(Property("output-low"))
     else:
         if n.exist_property("bias-pull-down"):
             n.remove_property("bias-pull-down")
+        if n.exist_property("output-low"):
+            n.remove_property("output-low")
         if not n.exist_property("bias-pull-up"):
             n.append(Property("bias-pull-up"))
         if not n.exist_property("output-high"):
@@ -492,7 +499,10 @@ def ad9545_config(config):
 
     clk.set_requested_clocks(input_refs, output_clocks)
 
-    clk.solve()
+    try:
+        clk.solve()
+    except Exception as e:
+        raise SynchronaClockError("Invalid Frequencies: Cannot solve AD9454 clock configuration...") from e
 
     jif_config = clk.get_config()
 
@@ -523,21 +533,28 @@ def remap_config(config):
 
 def configure_synchrona(config):
     config = remap_config(config)
+    config.errno_str = ""
 
     global driver_modes
     driver_modes = []
     with open('/etc/raspap/synchrona/synchrona_ch_modes.txt', 'r') as file:
         driver_modes = [line.rstrip() for line in file]
 
-    config = hmc7044_config(config)
-    if config is None:
-        return config
-
-    ad9545_config(config)
-
-    with open("/sys/class/gpio/gpio6/value", "w") as gpio:
-        gpio.write("0" if config.vcxo == 100000000 else "1")
-
-    subprocess.call("/etc/raspap/synchrona/reload_dtb.sh")
+    try:
+        hmc7044_config(config)
+        ad9545_config(config)
+    except SynchronaClockError as s:
+        config.errno_str = str(s)
+    except Exception as e:
+        # even though catching such a generic exception is not usually good, in this case
+        # is better to report some severe message to the user (and still print the stack trace in
+        # here) rather than letting the GUI reload wheel spinning indefinitely...
+        config.errno_str = "Unknown and severe error when doing hmc7044 and ad9545 configurations! \
+Run 'journalctl -r -u synchrona' on the board and report the bug..."
+        print(trace.print_exc())
+    else:
+        ret = subprocess.call("/etc/raspap/synchrona/reload_dtb.sh")
+        if ret:
+            config.errno_str = "Failed to reload the devicetree overlay: (ret=" + str(ret) + ")"
 
     return config
