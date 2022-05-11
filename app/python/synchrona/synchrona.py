@@ -129,9 +129,6 @@ def get_input_ref_status(input_ref):
     if hmc_status is None:
         return
 
-    if "PLL1 & PLL2 Locked" in hmc_status:
-        input_ref.locked = True
-
     try:
          hmc7044_ref = hmc_status.split("CLKIN")[1].split(" @")[0]
     except IndexError as e:
@@ -143,26 +140,37 @@ def get_input_ref_status(input_ref):
     elif hmc7044_ref == "1":
         input_ref.ref = "REF_CLK"
     elif hmc7044_ref == "2":
-        try:
-            pll0_status = read_debug_attr('/sys/kernel/debug/clk/PLL0/PLL0')
-            profile = pll0_status.split("Profile Number: ")[1].split("\n")[0]
-            dts = dt.dt(dt_source="local_file", local_dt_filepath="/boot/overlays/rpi-ad9545-hmc7044.dtbo",
-                        arch="arm")
-            ad9545 = dts.get_node_by_compatible("adi,ad9545")[0]
-            pll_node = ad9545.get_subnode("pll-clk@0")
-            pll_profile = pll_node.get_subnode("profile@" + profile)
-        except:
-            print(trace.print_exc())
-        else:
-            pll_source = read_attr(pll_profile, "adi,pll-source")
-            if pll_source == 3:
-                input_ref.ref = "PPS"
-            elif pll_source == 2:
-                input_ref.ref = "REF_IN"
-            # else just leave ref as "unknown"
+        pll0_status = read_debug_attr('/sys/kernel/debug/clk/PLL0/PLL0')
+        if pll0_status is None:
+            return
+        if "Freerun Mode: On" in pll0_status:
+            input_ref.ref = "OCXO"
+        elif "Holdover Mode: On" in pll0_status:
+            input_ref.ref = "Holdover"
+        elif "PLL status: Locked" in pll0_status:
+            # if PLL is locked is it safe to assume that the profile is on?!
+            try:
+                profile = pll0_status.split("Profile Number: ")[1].split("\n")[0]
+                dts = dt.dt(dt_source="local_file",
+                            local_dt_filepath="/boot/overlays/rpi-ad9545-hmc7044.dtbo", arch="arm")
+                ad9545 = dts.get_node_by_compatible("adi,ad9545")[0]
+                pll_node = ad9545.get_subnode("pll-clk@0")
+                pll_profile = pll_node.get_subnode("profile@" + profile)
+            except:
+                print(trace.print_exc())
+            else:
+                pll_source = read_attr(pll_profile, "adi,pll-source")
+                if pll_source == 3:
+                    input_ref.ref = "PPS"
+                elif pll_source == 2:
+                    input_ref.ref = "REF_IN"
+                # else just leave ref as "Unknown"
     else:
         # Just assume we are using CLKIN0 which should never happen
         input_ref.ref = "P_CH3"
+
+    if "PLL1 & PLL2 Locked" in hmc_status and input_ref.ref != "Unknown":
+        input_ref.locked = True
 
 def read_hmc7044_status():
     context = iio.Context('local:')
