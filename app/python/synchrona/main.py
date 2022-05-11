@@ -86,7 +86,7 @@ async def get_channels():
 
 class input_reference():
     def __init__(self):
-        self.ref = "unknown"
+        self.ref = "Unknown"
         self.locked = False
 
 @app.get("/synchrona/status")
