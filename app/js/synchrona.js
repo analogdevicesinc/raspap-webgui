@@ -111,9 +111,13 @@ advancedSvgElement.addEventListener("load",function(){
     advancedSvgDocument.getElementById('input_ad9545_pps').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
     advancedSvgDocument.getElementById('input_ad9545_ref_in').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
     advancedSvgDocument.getElementById('ref_out').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
-    advancedSvgDocument.getElementById('input_hmc7044_ch3').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
-    advancedSvgDocument.getElementById('input_hmc7044_ch2').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
-    advancedSvgDocument.getElementById('input_hmc7044_ch1').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
+    advancedSvgDocument.getElementById('input_hmc7044_ch3_p').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
+    advancedSvgDocument.getElementById('input_hmc7044_ch3_n').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
+    advancedSvgDocument.getElementById('input_hmc7044_ch2_p').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
+    advancedSvgDocument.getElementById('input_hmc7044_ch2_n').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
+    advancedSvgDocument.getElementById('input_hmc7044_ch1_p').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
+    advancedSvgDocument.getElementById('input_hmc7044_ch1_n').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
+
 
     for (let chId = 1; chId <= 14; chId++) {
         advancedSvgDocument.getElementById(`frequency_ch${chId}`).addEventListener('change', advancedMenuUpdateFrequency);
