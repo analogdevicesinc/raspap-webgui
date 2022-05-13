@@ -1,5 +1,6 @@
 
 const STATUS_CONNECTED = 'service-status-up';
+const STATUS_LIGHT_CONNECTED ='service-status-light-up'
 const STATUS_WARN = 'service-status-warn';
 const STATUS_DISCONNECTED = 'service-status-down';
 
@@ -622,6 +623,12 @@ function getConnectionStatus() {
     synchronaDtClass = synchronaDtClass.replace(`${STATUS_WARN}` , '');
     synchronaDtClass = synchronaDtClass.replace(`${STATUS_DISCONNECTED}` , '');
 
+    let clkRefClass = document.getElementById("synchronaRefInputStatus").className;
+    clkRefClass = clkRefClass.replace(`${STATUS_CONNECTED}`, '');
+    clkRefClass = clkRefClass.replace(`${STATUS_LIGHT_CONNECTED}`, '');
+    clkRefClass = clkRefClass.replace(`${STATUS_WARN}`, '');
+    clkRefClass = clkRefClass.replace(`${STATUS_DISCONNECTED}`, '');
+
     return fetch(`http://${ipAddress}:8000/synchrona/status`)
         .then(handleErrors)
         .then(response => {
@@ -655,11 +662,18 @@ function getConnectionStatus() {
 
             document.getElementById("synchronaRefInput").innerHTML = data.input_ref;
 
-            let clkRefClass = document.getElementById("synchronaRefInputStatus").className;
             if (data.pll_locked) {
-                clkRefClass = clkRefClass.replace(`${STATUS_DISCONNECTED}` , `${STATUS_CONNECTED}`);
+                if (data.input_ref == "OCXO") {
+                    clkRefClass += `${STATUS_LIGHT_CONNECTED}`;
+                } else if(data.input_ref == "Holdover") {
+                    clkRefClass += `${STATUS_WARN}`;
+                    alert("Holdover mode on! This means that a valid reference was lost... \
+Press 'Reload config' if you want to switch to the internal OCXO.")
+                } else {
+                    clkRefClass += `${STATUS_CONNECTED}`
+                }
             } else {
-                clkRefClass = clkRefClass.replace(`${STATUS_CONNECTED}` , `${STATUS_DISCONNECTED}`);
+                clkRefClass += `${STATUS_DISCONNECTED}`;
             }
             document.getElementById("synchronaRefInputStatus").className = clkRefClass;
 
