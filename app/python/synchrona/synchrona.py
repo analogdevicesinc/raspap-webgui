@@ -307,6 +307,17 @@ def read_channel():
     ret_dict["mode"] = selected_usecase
     ret_dict["input_priorities"] = get_input_priorities(d, hmc7044_prio)
 
+    # check ad9545 input references status
+    ret_dict["pps"] = False
+    ret_dict["ref_in"] = False
+    pps_ref = read_debug_attr('/sys/kernel/debug/clk/Ref-BB-Div/Ref-BB-Div')
+    if pps_ref is not None and "Valid" in pps_ref:
+        ret_dict["pps"] = True
+
+    ref_in_ref = read_debug_attr('/sys/kernel/debug/clk/Ref-B-Div/Ref-B-Div')
+    if ref_in_ref is not None and "Valid" in ref_in_ref:
+        ret_dict["ref_in"] = True
+
     return ret_dict
 
 
