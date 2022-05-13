@@ -97,14 +97,6 @@ advancedSvgElement.addEventListener("load",function(){
         advancedSvgDocument.getElementById(`output_ch${chId}`).addEventListener('click', onChannelClicked);
     }
 
-    // vcxo
-    advancedSvgDocument.getElementById('VCXO100').addEventListener('click', switchVCXO_TCXO);
-    advancedSvgDocument.getElementById('VCXO122').addEventListener('click', switchVCXO_TCXO);
-
-    // tcxo
-    advancedSvgDocument.getElementById('TCXO40').addEventListener('click', switchVCXO_TCXO);
-    advancedSvgDocument.getElementById('TCXO38').addEventListener('click', switchVCXO_TCXO);
-
     // init input
     advancedSvgDocument.getElementById('input_ad9545_internal').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
     advancedSvgDocument.getElementById('input_ad9545_internal').style.stroke = ADVANCED_CHANNEL_ENABLE_COLOR;
@@ -243,23 +235,6 @@ function isCombinedCMOSChannel(chId) {
 
 function setVCXO_TCXO(vcxo) {
     if (vcxo === 100000000) {
-        advancedSvgDocument.getElementById("VCXO100").style.fillOpacity = 0;
-        advancedSvgDocument.getElementById("TCXO40").style.fillOpacity = 0;
-
-        advancedSvgDocument.getElementById("VCXO122").style.fillOpacity = 0.6;
-        advancedSvgDocument.getElementById("TCXO38").style.fillOpacity = 0.6;
-    } else {
-        advancedSvgDocument.getElementById("VCXO122").style.fillOpacity = 0;
-        advancedSvgDocument.getElementById("TCXO38").style.fillOpacity = 0;
-
-        advancedSvgDocument.getElementById("VCXO100").style.fillOpacity = 0.6;
-        advancedSvgDocument.getElementById("TCXO40").style.fillOpacity = 0.6;
-    }
-}
-
-function switchVCXO_TCXO(event) {
-    let id = event.target.id;
-    if (id === "VCXO100" || id === "TCXO40") {
         advancedSvgDocument.getElementById("VCXO100").style.fillOpacity = 0;
         advancedSvgDocument.getElementById("TCXO40").style.fillOpacity = 0;
 
