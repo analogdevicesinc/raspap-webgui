@@ -235,35 +235,23 @@ function isCombinedCMOSChannel(chId) {
     return (chId === '5' || chId === '6' || chId === '7' || chId === '8');
 }
 
-function setVCXO_TCXO(vcxo) {
+function setVCXO(vcxo) {
     if (vcxo === 100000000) {
         advancedSvgDocument.getElementById("VCXO100").style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
         advancedSvgDocument.getElementById("VCXO100").style.fillOpacity = 0.350242;
         advancedSvgDocument.getElementById("VCXO100").style.stroke = ADVANCED_CHANNEL_ENABLE_COLOR;
-        advancedSvgDocument.getElementById('TCXO40').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
-        advancedSvgDocument.getElementById('TCXO40').style.fillOpacity = 0.350242;
-        advancedSvgDocument.getElementById('TCXO40').style.stroke = ADVANCED_CHANNEL_ENABLE_COLOR;
 
         advancedSvgDocument.getElementById("VCXO122").style.fill = ADVANCED_RECT_FILL_WHITE;
         advancedSvgDocument.getElementById("VCXO122").style.fillOpacity = 0;
         advancedSvgDocument.getElementById("VCXO122").style.stroke = ADVANCED_RECT_STROKE_BLACK;
-        advancedSvgDocument.getElementById('TCXO38').style.fill = ADVANCED_RECT_FILL_WHITE;
-        advancedSvgDocument.getElementById('TCXO38').style.fillOpacity = 0;
-        advancedSvgDocument.getElementById('TCXO38').style.stroke = ADVANCED_RECT_STROKE_BLACK;
     } else {
         advancedSvgDocument.getElementById("VCXO122").style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
         advancedSvgDocument.getElementById("VCXO122").style.fillOpacity = 0.350242;
         advancedSvgDocument.getElementById("VCXO122").style.stroke = ADVANCED_CHANNEL_ENABLE_COLOR;
-        advancedSvgDocument.getElementById('TCXO38').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
-        advancedSvgDocument.getElementById('TCXO38').style.fillOpacity = 0.350242;
-        advancedSvgDocument.getElementById('TCXO38').style.stroke = ADVANCED_CHANNEL_ENABLE_COLOR;
 
         advancedSvgDocument.getElementById("VCXO100").style.fill = ADVANCED_RECT_FILL_WHITE;
         advancedSvgDocument.getElementById("VCXO100").style.fillOpacity = 0;
         advancedSvgDocument.getElementById("VCXO100").style.stroke = ADVANCED_RECT_STROKE_BLACK;
-        advancedSvgDocument.getElementById('TCXO40').style.fill = ADVANCED_RECT_FILL_WHITE;
-        advancedSvgDocument.getElementById('TCXO40').style.fillOpacity = 0;
-        advancedSvgDocument.getElementById('TCXO40').style.stroke = ADVANCED_RECT_STROKE_BLACK;
     }
 }
 
@@ -531,7 +519,7 @@ function reloadConfig() {
             } else if (json.errno_str.length) {
                 alert(json.errno_str);
             } else {
-                setVCXO_TCXO(json.vcxo);
+                setVCXO(json.vcxo);
                 for (let i = 1; i <= 14; i++) {
                     updateDivider(i, json.channels[i-1].divider);
                 }
@@ -767,6 +755,62 @@ Consider restarting your devicetree in the Debug tab...");
     }
 }
 
+function update_input_references_status(vcxo, pps, ref_in) {
+    input_ref = document.getElementById("synchronaRefInput").innerHTML;
+    pll_locked = false;
+
+    if(document.getElementById("synchronaRefInputStatus").className.includes(STATUS_CONNECTED)) {
+        pll_locked = true;
+    }
+
+    if (ref_in) {
+        advancedSvgDocument.getElementById('input_ad9545_ref_in').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
+    } else {
+        advancedSvgDocument.getElementById('input_ad9545_ref_in').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
+    }
+
+    if (pps) {
+        advancedSvgDocument.getElementById('input_ad9545_pps').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
+    } else {
+        advancedSvgDocument.getElementById('input_ad9545_pps').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
+    }
+
+    if (input_ref == "REF_CLK" && pll_locked) {
+        advancedSvgDocument.getElementById('input_hmc7044_ch2_p').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
+        advancedSvgDocument.getElementById('input_hmc7044_ch2_n').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
+        return
+    } else {
+        advancedSvgDocument.getElementById('input_hmc7044_ch2_p').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
+        advancedSvgDocument.getElementById('input_hmc7044_ch2_n').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
+    }
+
+    if (input_ref == "P_CH3" && pll_locked) {
+        advancedSvgDocument.getElementById('input_hmc7044_ch3_p').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
+        advancedSvgDocument.getElementById('input_hmc7044_ch3_n').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
+    } else {
+        advancedSvgDocument.getElementById('input_hmc7044_ch3_p').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
+        advancedSvgDocument.getElementById('input_hmc7044_ch3_n').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
+    }
+
+    advancedSvgDocument.getElementById('TCXO40').style.fill = ADVANCED_RECT_FILL_WHITE;
+    advancedSvgDocument.getElementById('TCXO40').style.fillOpacity = 0;
+    advancedSvgDocument.getElementById('TCXO40').style.stroke = ADVANCED_RECT_STROKE_BLACK;
+    advancedSvgDocument.getElementById('TCXO38').style.fill = ADVANCED_RECT_FILL_WHITE;
+    advancedSvgDocument.getElementById('TCXO38').style.fillOpacity = 0;
+    advancedSvgDocument.getElementById('TCXO38').style.stroke = ADVANCED_RECT_STROKE_BLACK;
+    if (input_ref == "TCXO" && pll_locked) {
+        if (vcxo == 122880000) {
+            advancedSvgDocument.getElementById('TCXO38').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
+            advancedSvgDocument.getElementById('TCXO38').style.fillOpacity = 0.350242;
+            advancedSvgDocument.getElementById('TCXO38').style.stroke = ADVANCED_CHANNEL_ENABLE_COLOR;
+        } else {
+            advancedSvgDocument.getElementById('TCXO40').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
+            advancedSvgDocument.getElementById('TCXO40').style.fillOpacity = 0.350242;
+            advancedSvgDocument.getElementById('TCXO40').style.stroke = ADVANCED_CHANNEL_ENABLE_COLOR;
+        }
+    }
+}
+
 function updateValuesAdvanced(data) {
     pll2Freq = data["channels"][0].frequency * data["channels"][0].divider;
 
@@ -787,8 +831,9 @@ function updateValuesAdvanced(data) {
         updateCoarseDelayRange(advancedSvgDocument, i, pll2Freq);
         updateFineDelayGeneric(advancedSvgDocument, i, fineDelayFromDTValue(ch.fine_delay));
     }
-    setVCXO_TCXO(data["vcxo"]);
+    setVCXO(data["vcxo"]);
     update_input_priorities(data["input_priorities"])
+    update_input_references_status(data["vcxo"], data["pps"], data["ref_in"]);
 }
 
 function setInputPriorityVisibility(id, visible) {
