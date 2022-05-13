@@ -6,6 +6,8 @@ const STATUS_DISCONNECTED = 'service-status-down';
 
 const ADVANCED_CHANNEL_ENABLE_COLOR = 'rgb(44, 107, 27)';
 const ADVANCED_CHANNEL_DISABLE_COLOR = 'rgb(166, 31, 31)';
+const ADVANCED_RECT_FILL_WHITE  = 'rgb(255, 255, 255)';
+const ADVANCED_RECT_STROKE_BLACK  = 'rgb(0, 0, 0)';
 
 const SELECT_STROKE = '0.7px';
 const DESELECT_STROKE = '0px';
@@ -235,17 +237,33 @@ function isCombinedCMOSChannel(chId) {
 
 function setVCXO_TCXO(vcxo) {
     if (vcxo === 100000000) {
-        advancedSvgDocument.getElementById("VCXO100").style.fillOpacity = 0;
-        advancedSvgDocument.getElementById("TCXO40").style.fillOpacity = 0;
+        advancedSvgDocument.getElementById("VCXO100").style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
+        advancedSvgDocument.getElementById("VCXO100").style.fillOpacity = 0.350242;
+        advancedSvgDocument.getElementById("VCXO100").style.stroke = ADVANCED_CHANNEL_ENABLE_COLOR;
+        advancedSvgDocument.getElementById('TCXO40').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
+        advancedSvgDocument.getElementById('TCXO40').style.fillOpacity = 0.350242;
+        advancedSvgDocument.getElementById('TCXO40').style.stroke = ADVANCED_CHANNEL_ENABLE_COLOR;
 
-        advancedSvgDocument.getElementById("VCXO122").style.fillOpacity = 0.6;
-        advancedSvgDocument.getElementById("TCXO38").style.fillOpacity = 0.6;
-    } else {
+        advancedSvgDocument.getElementById("VCXO122").style.fill = ADVANCED_RECT_FILL_WHITE;
         advancedSvgDocument.getElementById("VCXO122").style.fillOpacity = 0;
-        advancedSvgDocument.getElementById("TCXO38").style.fillOpacity = 0;
+        advancedSvgDocument.getElementById("VCXO122").style.stroke = ADVANCED_RECT_STROKE_BLACK;
+        advancedSvgDocument.getElementById('TCXO38').style.fill = ADVANCED_RECT_FILL_WHITE;
+        advancedSvgDocument.getElementById('TCXO38').style.fillOpacity = 0;
+        advancedSvgDocument.getElementById('TCXO38').style.stroke = ADVANCED_RECT_STROKE_BLACK;
+    } else {
+        advancedSvgDocument.getElementById("VCXO122").style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
+        advancedSvgDocument.getElementById("VCXO122").style.fillOpacity = 0.350242;
+        advancedSvgDocument.getElementById("VCXO122").style.stroke = ADVANCED_CHANNEL_ENABLE_COLOR;
+        advancedSvgDocument.getElementById('TCXO38').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
+        advancedSvgDocument.getElementById('TCXO38').style.fillOpacity = 0.350242;
+        advancedSvgDocument.getElementById('TCXO38').style.stroke = ADVANCED_CHANNEL_ENABLE_COLOR;
 
-        advancedSvgDocument.getElementById("VCXO100").style.fillOpacity = 0.6;
-        advancedSvgDocument.getElementById("TCXO40").style.fillOpacity = 0.6;
+        advancedSvgDocument.getElementById("VCXO100").style.fill = ADVANCED_RECT_FILL_WHITE;
+        advancedSvgDocument.getElementById("VCXO100").style.fillOpacity = 0;
+        advancedSvgDocument.getElementById("VCXO100").style.stroke = ADVANCED_RECT_STROKE_BLACK;
+        advancedSvgDocument.getElementById('TCXO40').style.fill = ADVANCED_RECT_FILL_WHITE;
+        advancedSvgDocument.getElementById('TCXO40').style.fillOpacity = 0;
+        advancedSvgDocument.getElementById('TCXO40').style.stroke = ADVANCED_RECT_STROKE_BLACK;
     }
 }
 
@@ -550,7 +568,7 @@ function getJSON() {
 }
 
 function getVCXO() {
-    if ( advancedSvgDocument.getElementById("VCXO100").style.fillOpacity === "0") {
+    if ( advancedSvgDocument.getElementById("VCXO100").style.fill === ADVANCED_CHANNEL_ENABLE_COLOR) {
         return 100000000;
     }
     return 122880000;
