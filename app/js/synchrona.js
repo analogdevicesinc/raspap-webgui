@@ -509,22 +509,20 @@ function reloadConfig() {
                 alert("Unknown error! No data returned from the server...");
             } else if (json.errno_str.length) {
                 alert(json.errno_str);
-            } else {
-                setVCXO(json.vcxo);
-                for (let i = 1; i <= 14; i++) {
-                    updateDivider(i, json.channels[i-1].divider);
-                }
             }
+
             loadingButton(document.getElementById("gen_btnreconfig"), false);
             loadingButton(document.getElementById("adv_btnreconfig"), false);
             console.info('Synchrona updated');
             getConnectionStatus();
+            updateAllMenus();
         }).
         catch(function(error) {
             console.error('Reload failed', error)
             loadingButton(document.getElementById("gen_btnreconfig"), false);
             loadingButton(document.getElementById("adv_btnreconfig"), false);
             getConnectionStatus();
+            updateAllMenus();
         });
 }
 
@@ -701,6 +699,18 @@ function updateAdvancedMenu() {
         if (data == null) {
             return false;
         }
+        updateValuesAdvanced(data);
+        return true;
+    });
+}
+
+function updateAllMenus() {
+    getSynchronaData()
+    .then(data => {
+        if (data == null) {
+            return false;
+        }
+        updateValuesGeneral(data);
         updateValuesAdvanced(data);
         return true;
     });
