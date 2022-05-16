@@ -224,23 +224,25 @@ function isCombinedCMOSChannel(chId) {
     return (chId === '5' || chId === '6' || chId === '7' || chId === '8');
 }
 
+function setAdvancedSvgRectState(elem, en) {
+    if (en) {
+        advancedSvgDocument.getElementById(elem).style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
+        advancedSvgDocument.getElementById(elem).style.fillOpacity = 0.350242;
+        advancedSvgDocument.getElementById(elem).style.stroke = ADVANCED_CHANNEL_ENABLE_COLOR;
+    } else {
+        advancedSvgDocument.getElementById(elem).style.fill = ADVANCED_RECT_FILL_WHITE;
+        advancedSvgDocument.getElementById(elem).style.fillOpacity = 0;
+        advancedSvgDocument.getElementById(elem).style.stroke = ADVANCED_RECT_STROKE_BLACK;
+    }
+}
+
 function setVCXO(vcxo) {
     if (vcxo === 100000000) {
-        advancedSvgDocument.getElementById("VCXO100").style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
-        advancedSvgDocument.getElementById("VCXO100").style.fillOpacity = 0.350242;
-        advancedSvgDocument.getElementById("VCXO100").style.stroke = ADVANCED_CHANNEL_ENABLE_COLOR;
-
-        advancedSvgDocument.getElementById("VCXO122").style.fill = ADVANCED_RECT_FILL_WHITE;
-        advancedSvgDocument.getElementById("VCXO122").style.fillOpacity = 0;
-        advancedSvgDocument.getElementById("VCXO122").style.stroke = ADVANCED_RECT_STROKE_BLACK;
+        setAdvancedSvgRectState("VCXO100", true);
+        setAdvancedSvgRectState("VCXO122", false);
     } else {
-        advancedSvgDocument.getElementById("VCXO122").style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
-        advancedSvgDocument.getElementById("VCXO122").style.fillOpacity = 0.350242;
-        advancedSvgDocument.getElementById("VCXO122").style.stroke = ADVANCED_CHANNEL_ENABLE_COLOR;
-
-        advancedSvgDocument.getElementById("VCXO100").style.fill = ADVANCED_RECT_FILL_WHITE;
-        advancedSvgDocument.getElementById("VCXO100").style.fillOpacity = 0;
-        advancedSvgDocument.getElementById("VCXO100").style.stroke = ADVANCED_RECT_STROKE_BLACK;
+        setAdvancedSvgRectState("VCXO122", true);
+        setAdvancedSvgRectState("VCXO100", false);
     }
 }
 
@@ -781,21 +783,13 @@ function update_input_references_status(vcxo, pps, ref_in) {
         advancedSvgDocument.getElementById('input_hmc7044_ch3_n').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
     }
 
-    advancedSvgDocument.getElementById('TCXO40').style.fill = ADVANCED_RECT_FILL_WHITE;
-    advancedSvgDocument.getElementById('TCXO40').style.fillOpacity = 0;
-    advancedSvgDocument.getElementById('TCXO40').style.stroke = ADVANCED_RECT_STROKE_BLACK;
-    advancedSvgDocument.getElementById('TCXO38').style.fill = ADVANCED_RECT_FILL_WHITE;
-    advancedSvgDocument.getElementById('TCXO38').style.fillOpacity = 0;
-    advancedSvgDocument.getElementById('TCXO38').style.stroke = ADVANCED_RECT_STROKE_BLACK;
+    setAdvancedSvgRectState("TCXO40", false);
+    setAdvancedSvgRectState("TCXO38", false);
     if (input_ref == "TCXO" && pll_locked) {
         if (vcxo == 122880000) {
-            advancedSvgDocument.getElementById('TCXO38').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
-            advancedSvgDocument.getElementById('TCXO38').style.fillOpacity = 0.350242;
-            advancedSvgDocument.getElementById('TCXO38').style.stroke = ADVANCED_CHANNEL_ENABLE_COLOR;
+            setAdvancedSvgRectState("TCXO38", true);
         } else {
-            advancedSvgDocument.getElementById('TCXO40').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
-            advancedSvgDocument.getElementById('TCXO40').style.fillOpacity = 0.350242;
-            advancedSvgDocument.getElementById('TCXO40').style.stroke = ADVANCED_CHANNEL_ENABLE_COLOR;
+            setAdvancedSvgRectState("TCXO40", true);
         }
     }
 }
