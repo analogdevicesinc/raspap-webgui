@@ -156,6 +156,11 @@ i.fa.fa-bars:hover{
   color: #f6f044;
 }
 
+.service-status-light-up {
+  color: #a1ec38;
+  animation: flash 1s linear infinite;
+}
+
 .service-status-down {
   color: #f80107;
   animation: flash 1s linear infinite;

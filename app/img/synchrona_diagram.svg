@@ -4219,7 +4219,7 @@
        transform="translate(-261.70513,54.587854)">
       <ellipse
          style="fill:#a61f1f;fill-opacity:1;stroke:none;stroke-width:0.180889;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
-         id="path43677-4-7-1-9"
+         id="input_hmc7044_ch3_p"
          cx="271.27954"
          cy="24.946056"
          rx="2.4231153"
@@ -4228,7 +4228,7 @@
          transform="matrix(1.0525629,0,0,1.0496015,-14.283338,-1.2554917)" />
       <ellipse
          style="fill:#a61f1f;fill-opacity:1;stroke:none;stroke-width:0.180889;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
-         id="path43677-3-52-67-0-6"
+         id="input_hmc7044_ch3_n"
          cx="271.27954"
          cy="24.946056"
          rx="2.4231153"
@@ -4342,7 +4342,7 @@
        transform="translate(-261.66732,67.687596)">
       <ellipse
          style="fill:#a61f1f;fill-opacity:1;stroke:none;stroke-width:0.180889;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
-         id="path43677-4-7-1"
+         id="input_hmc7044_ch2_p"
          cx="271.27954"
          cy="24.946056"
          rx="2.4231153"
@@ -4351,7 +4351,7 @@
          transform="matrix(1.0525629,0,0,1.0496015,-14.283338,-1.2554917)" />
       <ellipse
          style="fill:#a61f1f;fill-opacity:1;stroke:none;stroke-width:0.180889;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
-         id="path43677-3-52-67-0"
+         id="input_hmc7044_ch2_n"
          cx="271.27954"
          cy="24.946056"
          rx="2.4231153"
@@ -5687,7 +5687,7 @@
        transform="translate(-261.66945,80.765085)">
       <ellipse
          style="fill:#a61f1f;fill-opacity:1;stroke:none;stroke-width:0.180889;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
-         id="path43677-4-7-1-4"
+         id="input_hmc7044_ch1_p"
          cx="271.27954"
          cy="24.946056"
          rx="2.4231153"
@@ -5696,7 +5696,7 @@
          transform="matrix(1.0525629,0,0,1.0496015,-14.283338,-1.2554917)" />
       <ellipse
          style="fill:#a61f1f;fill-opacity:1;stroke:none;stroke-width:0.180889;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
-         id="path43677-3-52-67-0-7"
+         id="input_hmc7044_ch1_n"
          cx="271.27954"
          cy="24.946056"
          rx="2.4231153"
@@ -6991,14 +6991,14 @@
        x="87.914993"
        y="75.118195" />
     <rect
-       style="fill:#727272;fill-opacity:0;stroke:#000000;stroke-width:0;stroke-linejoin:round"
+       style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-width:0.479338;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
        id="VCXO100"
        width="15.520659"
        height="9.5206642"
        x="87.914993"
        y="75.118195" />
     <rect
-       style="fill:#727272;fill-opacity:0.6;stroke:#000000;stroke-width:0;stroke-linejoin:round"
+       style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-width:0.479338;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
        id="VCXO122"
        width="15.520659"
        height="9.5206642"
@@ -7033,14 +7033,14 @@
        x="35.759167"
        y="112.88962" />
     <rect
-       style="fill:#727272;fill-opacity:0.010022;stroke:#000000;stroke-width:0;stroke-linejoin:round"
+       style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-width:0.481621;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
        id="TCXO40"
        width="15.520659"
        height="9.5206642"
        x="36.958725"
        y="114.0799" />
     <rect
-       style="fill:#727272;fill-opacity:0.6;stroke:#000000;stroke-width:0;stroke-linejoin:round"
+       style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-width:0.479338;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
        id="TCXO38"
        width="15.520659"
        height="9.5206642"

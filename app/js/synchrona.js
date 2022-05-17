@@ -1,10 +1,13 @@
 
 const STATUS_CONNECTED = 'service-status-up';
+const STATUS_LIGHT_CONNECTED ='service-status-light-up'
 const STATUS_WARN = 'service-status-warn';
 const STATUS_DISCONNECTED = 'service-status-down';
 
 const ADVANCED_CHANNEL_ENABLE_COLOR = 'rgb(44, 107, 27)';
 const ADVANCED_CHANNEL_DISABLE_COLOR = 'rgb(166, 31, 31)';
+const ADVANCED_RECT_FILL_WHITE  = 'rgb(255, 255, 255)';
+const ADVANCED_RECT_STROKE_BLACK  = 'rgb(0, 0, 0)';
 
 const SELECT_STROKE = '0.7px';
 const DESELECT_STROKE = '0px';
@@ -96,24 +99,9 @@ advancedSvgElement.addEventListener("load",function(){
         advancedSvgDocument.getElementById(`output_ch${chId}`).addEventListener('click', onChannelClicked);
     }
 
-    // vcxo
-    advancedSvgDocument.getElementById('VCXO100').addEventListener('click', switchVCXO_TCXO);
-    advancedSvgDocument.getElementById('VCXO122').addEventListener('click', switchVCXO_TCXO);
-
-    // tcxo
-    advancedSvgDocument.getElementById('TCXO40').addEventListener('click', switchVCXO_TCXO);
-    advancedSvgDocument.getElementById('TCXO38').addEventListener('click', switchVCXO_TCXO);
-
     // init input
     advancedSvgDocument.getElementById('input_ad9545_internal').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
     advancedSvgDocument.getElementById('input_ad9545_internal').style.stroke = ADVANCED_CHANNEL_ENABLE_COLOR;
-    advancedSvgDocument.getElementById('input_ad9545_sync').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
-    advancedSvgDocument.getElementById('input_ad9545_pps').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
-    advancedSvgDocument.getElementById('input_ad9545_ref_in').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
-    advancedSvgDocument.getElementById('ref_out').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
-    advancedSvgDocument.getElementById('input_hmc7044_ch3').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
-    advancedSvgDocument.getElementById('input_hmc7044_ch2').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
-    advancedSvgDocument.getElementById('input_hmc7044_ch1').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
 
     for (let chId = 1; chId <= 14; chId++) {
         advancedSvgDocument.getElementById(`frequency_ch${chId}`).addEventListener('change', advancedMenuUpdateFrequency);
@@ -236,36 +224,25 @@ function isCombinedCMOSChannel(chId) {
     return (chId === '5' || chId === '6' || chId === '7' || chId === '8');
 }
 
-function setVCXO_TCXO(vcxo) {
-    if (vcxo === 100000000) {
-        advancedSvgDocument.getElementById("VCXO100").style.fillOpacity = 0;
-        advancedSvgDocument.getElementById("TCXO40").style.fillOpacity = 0;
-
-        advancedSvgDocument.getElementById("VCXO122").style.fillOpacity = 0.6;
-        advancedSvgDocument.getElementById("TCXO38").style.fillOpacity = 0.6;
+function setAdvancedSvgRectState(elem, en) {
+    if (en) {
+        advancedSvgDocument.getElementById(elem).style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
+        advancedSvgDocument.getElementById(elem).style.fillOpacity = 0.350242;
+        advancedSvgDocument.getElementById(elem).style.stroke = ADVANCED_CHANNEL_ENABLE_COLOR;
     } else {
-        advancedSvgDocument.getElementById("VCXO122").style.fillOpacity = 0;
-        advancedSvgDocument.getElementById("TCXO38").style.fillOpacity = 0;
-
-        advancedSvgDocument.getElementById("VCXO100").style.fillOpacity = 0.6;
-        advancedSvgDocument.getElementById("TCXO40").style.fillOpacity = 0.6;
+        advancedSvgDocument.getElementById(elem).style.fill = ADVANCED_RECT_FILL_WHITE;
+        advancedSvgDocument.getElementById(elem).style.fillOpacity = 0;
+        advancedSvgDocument.getElementById(elem).style.stroke = ADVANCED_RECT_STROKE_BLACK;
     }
 }
 
-function switchVCXO_TCXO(event) {
-    let id = event.target.id;
-    if (id === "VCXO100" || id === "TCXO40") {
-        advancedSvgDocument.getElementById("VCXO100").style.fillOpacity = 0;
-        advancedSvgDocument.getElementById("TCXO40").style.fillOpacity = 0;
-
-        advancedSvgDocument.getElementById("VCXO122").style.fillOpacity = 0.6;
-        advancedSvgDocument.getElementById("TCXO38").style.fillOpacity = 0.6;
+function setVCXO(vcxo) {
+    if (vcxo === 100000000) {
+        setAdvancedSvgRectState("VCXO100", true);
+        setAdvancedSvgRectState("VCXO122", false);
     } else {
-        advancedSvgDocument.getElementById("VCXO122").style.fillOpacity = 0;
-        advancedSvgDocument.getElementById("TCXO38").style.fillOpacity = 0;
-
-        advancedSvgDocument.getElementById("VCXO100").style.fillOpacity = 0.6;
-        advancedSvgDocument.getElementById("TCXO40").style.fillOpacity = 0.6;
+        setAdvancedSvgRectState("VCXO122", true);
+        setAdvancedSvgRectState("VCXO100", false);
     }
 }
 
@@ -532,22 +509,20 @@ function reloadConfig() {
                 alert("Unknown error! No data returned from the server...");
             } else if (json.errno_str.length) {
                 alert(json.errno_str);
-            } else {
-                setVCXO_TCXO(json.vcxo);
-                for (let i = 1; i <= 14; i++) {
-                    updateDivider(i, json.channels[i-1].divider);
-                }
             }
+
             loadingButton(document.getElementById("gen_btnreconfig"), false);
             loadingButton(document.getElementById("adv_btnreconfig"), false);
             console.info('Synchrona updated');
             getConnectionStatus();
+            updateAllMenus();
         }).
         catch(function(error) {
             console.error('Reload failed', error)
             loadingButton(document.getElementById("gen_btnreconfig"), false);
             loadingButton(document.getElementById("adv_btnreconfig"), false);
             getConnectionStatus();
+            updateAllMenus();
         });
 }
 
@@ -570,7 +545,7 @@ function getJSON() {
 }
 
 function getVCXO() {
-    if ( advancedSvgDocument.getElementById("VCXO100").style.fillOpacity === "0") {
+    if ( advancedSvgDocument.getElementById("VCXO100").style.fill === ADVANCED_CHANNEL_ENABLE_COLOR) {
         return 100000000;
     }
     return 122880000;
@@ -618,6 +593,12 @@ function getConnectionStatus() {
     synchronaDtClass = synchronaDtClass.replace(`${STATUS_WARN}` , '');
     synchronaDtClass = synchronaDtClass.replace(`${STATUS_DISCONNECTED}` , '');
 
+    let clkRefClass = document.getElementById("synchronaRefInputStatus").className;
+    clkRefClass = clkRefClass.replace(`${STATUS_CONNECTED}`, '');
+    clkRefClass = clkRefClass.replace(`${STATUS_LIGHT_CONNECTED}`, '');
+    clkRefClass = clkRefClass.replace(`${STATUS_WARN}`, '');
+    clkRefClass = clkRefClass.replace(`${STATUS_DISCONNECTED}`, '');
+
     return fetch(`http://${ipAddress}:8000/synchrona/status`)
         .then(handleErrors)
         .then(response => {
@@ -651,11 +632,18 @@ function getConnectionStatus() {
 
             document.getElementById("synchronaRefInput").innerHTML = data.input_ref;
 
-            let clkRefClass = document.getElementById("synchronaRefInputStatus").className;
             if (data.pll_locked) {
-                clkRefClass = clkRefClass.replace(`${STATUS_DISCONNECTED}` , `${STATUS_CONNECTED}`);
+                if (data.input_ref == "OCXO") {
+                    clkRefClass += `${STATUS_LIGHT_CONNECTED}`;
+                } else if(data.input_ref == "Holdover") {
+                    clkRefClass += `${STATUS_WARN}`;
+                    alert("Holdover mode on! This means that a valid reference was lost... \
+Press 'Reload config' if you want to switch to the internal OCXO.")
+                } else {
+                    clkRefClass += `${STATUS_CONNECTED}`
+                }
             } else {
-                clkRefClass = clkRefClass.replace(`${STATUS_CONNECTED}` , `${STATUS_DISCONNECTED}`);
+                clkRefClass += `${STATUS_DISCONNECTED}`;
             }
             document.getElementById("synchronaRefInputStatus").className = clkRefClass;
 
@@ -716,6 +704,18 @@ function updateAdvancedMenu() {
     });
 }
 
+function updateAllMenus() {
+    getSynchronaData()
+    .then(data => {
+        if (data == null) {
+            return false;
+        }
+        updateValuesGeneral(data);
+        updateValuesAdvanced(data);
+        return true;
+    });
+}
+
 function updateCoarseDelayRange(doc, chId, pll2Freq) {
     doc.getElementById(`coarse_delay_ch${chId}`).min = 0;
     doc.getElementById(`coarse_delay_ch${chId}`).max = 17 * parseInt((Math.pow(10, 12)) / (2 * pll2Freq),10);
@@ -756,6 +756,54 @@ Consider restarting your devicetree in the Debug tab...");
     }
 }
 
+function update_input_references_status(vcxo, pps, ref_in) {
+    input_ref = document.getElementById("synchronaRefInput").innerHTML;
+    pll_locked = false;
+
+    if(document.getElementById("synchronaRefInputStatus").className.includes(STATUS_CONNECTED)) {
+        pll_locked = true;
+    }
+
+    if (ref_in) {
+        advancedSvgDocument.getElementById('input_ad9545_ref_in').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
+    } else {
+        advancedSvgDocument.getElementById('input_ad9545_ref_in').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
+    }
+
+    if (pps) {
+        advancedSvgDocument.getElementById('input_ad9545_pps').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
+    } else {
+        advancedSvgDocument.getElementById('input_ad9545_pps').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
+    }
+
+    if (input_ref == "REF_CLK" && pll_locked) {
+        advancedSvgDocument.getElementById('input_hmc7044_ch2_p').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
+        advancedSvgDocument.getElementById('input_hmc7044_ch2_n').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
+        return
+    } else {
+        advancedSvgDocument.getElementById('input_hmc7044_ch2_p').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
+        advancedSvgDocument.getElementById('input_hmc7044_ch2_n').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
+    }
+
+    if (input_ref == "P_CH3" && pll_locked) {
+        advancedSvgDocument.getElementById('input_hmc7044_ch3_p').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
+        advancedSvgDocument.getElementById('input_hmc7044_ch3_n').style.fill = ADVANCED_CHANNEL_ENABLE_COLOR;
+    } else {
+        advancedSvgDocument.getElementById('input_hmc7044_ch3_p').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
+        advancedSvgDocument.getElementById('input_hmc7044_ch3_n').style.fill = ADVANCED_CHANNEL_DISABLE_COLOR;
+    }
+
+    setAdvancedSvgRectState("TCXO40", false);
+    setAdvancedSvgRectState("TCXO38", false);
+    if (input_ref == "TCXO" && pll_locked) {
+        if (vcxo == 122880000) {
+            setAdvancedSvgRectState("TCXO38", true);
+        } else {
+            setAdvancedSvgRectState("TCXO40", true);
+        }
+    }
+}
+
 function updateValuesAdvanced(data) {
     pll2Freq = data["channels"][0].frequency * data["channels"][0].divider;
 
@@ -776,8 +824,9 @@ function updateValuesAdvanced(data) {
         updateCoarseDelayRange(advancedSvgDocument, i, pll2Freq);
         updateFineDelayGeneric(advancedSvgDocument, i, fineDelayFromDTValue(ch.fine_delay));
     }
-    setVCXO_TCXO(data["vcxo"]);
+    setVCXO(data["vcxo"]);
     update_input_priorities(data["input_priorities"])
+    update_input_references_status(data["vcxo"], data["pps"], data["ref_in"]);
 }
 
 function setInputPriorityVisibility(id, visible) {
