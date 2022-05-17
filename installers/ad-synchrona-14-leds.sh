@@ -17,6 +17,17 @@ AD9545_LOCKED=0
 HMC7044_LOCKED=0
 AD9545_FREERUN=0
 
+EXIT_SIGNAL=0
+
+trap synchrona_leds_exit SIGTERM
+synchrona_leds_exit()
+{
+	EXIT_SIGNAL=1
+}
+
+[ ! -d "/sys/class/gpio/gpio$RED_LED1" ] && echo $RED_LED1 > "/sys/class/gpio/export"
+[ ! -d "/sys/class/gpio/gpio$GREEN_LED1" ] && echo $GREEN_LED1 > "/sys/class/gpio/export"
+
 while true
 do
 	ad9545_pll_status=$(cat $AD9545_STATUS_PATH)
@@ -53,6 +64,19 @@ do
 		LED_STATUS=$STATUS_RED_GREEN_BLINKING
 	else
 		LED_STATUS=$STATUS_RED
+	fi
+
+	echo "out" > "/sys/class/gpio/gpio$RED_LED1/direction"
+	echo "out" > "/sys/class/gpio/gpio$GREEN_LED1/direction"
+
+	# On script exit leave just the red LED on
+	if [[ $EXIT_SIGNAL == 1 ]]; then
+		echo 1 > "/sys/class/gpio/gpio$RED_LED1/value"
+		echo 0 > "/sys/class/gpio/gpio$GREEN_LED1/value"
+
+		echo $RED_LED1 > "/sys/class/gpio/unexport"
+		echo $GREEN_LED1 > "/sys/class/gpio/unexport"
+		exit 0
 	fi
 
 	if [[ $LED_STATUS == $STATUS_GREEN ]]; then
