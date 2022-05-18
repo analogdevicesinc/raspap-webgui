@@ -196,9 +196,11 @@ $bridgedEnabled = getBridgedState();
           <a class="nav-link" href="system_info"><i class="fas fa-cube fa-fw mr-2"></i><span class="nav-label"><?php echo _("System"); ?></a>
           </li>
             <?php endif; ?>
+          <?php if (RASPI_ABOUT_ENABLED) : ?>
          <li class="nav-item">
           <a class="nav-link" href="about"><i class="fas fa-info-circle fa-fw mr-2"></i><span class="nav-label"><?php echo _("About RaspAP"); ?></a>
         </li>
+          <?php endif; ?>
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
 

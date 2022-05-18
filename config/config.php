@@ -47,6 +47,7 @@ define('RASPI_VNSTAT_ENABLED', true);
 define('RASPI_SYSTEM_ENABLED', true);
 define('RASPI_MONITOR_ENABLED', false);
 define('RASPI_WIFI_ENABLED', false);
+define('RASPI_ABOUT_ENABLED', false);
 
 // Locale settings
 define('LOCALE_ROOT', 'locale');
