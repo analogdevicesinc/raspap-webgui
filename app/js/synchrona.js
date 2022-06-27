@@ -723,7 +723,10 @@ function updateCoarseDelayRange(doc, chId, pll2Freq) {
 }
 
 function updateValuesGeneral(data) {
-    pll2Freq = data["channels"][0].frequency * data["channels"][0].divider;
+    /* find the first enabled channel so that we should get an exact PLL2 freq */
+    const idx = data["channels"].findIndex((elem) => elem.enable == true);
+    pll2Freq = data["channels"][idx].frequency * data["channels"][idx].divider;
+
     for (let i = 1; i <= 14; i++) {
         let ch = data["channels"][i-1];
         document.getElementById(`mode${i}`).textContent = ch.mode;
@@ -805,7 +808,9 @@ function update_input_references_status(vcxo, pps, ref_in) {
 }
 
 function updateValuesAdvanced(data) {
-    pll2Freq = data["channels"][0].frequency * data["channels"][0].divider;
+    /* find the first enabled channel so that we should get an exact PLL2 freq */
+    const idx = data["channels"].findIndex((elem) => elem.enable == true);
+    pll2Freq = data["channels"][idx].frequency * data["channels"][idx].divider;
 
     if (data["mode"] === "zerodelay") {
         document.getElementById('cbxusecase').value = "1PPS";
