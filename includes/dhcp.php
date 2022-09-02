@@ -86,6 +86,8 @@ function saveDHCPConfig($status)
         // remove dhcp + dnsmasq configs for selected interface
         $return = removeDHCPConfig($iface,$status);
         $return = removeDnsmasqConfig($iface,$status);
+    } else if ($_POST['adapter-ip'] == "dhcp") {
+        $return = removeDHCPConfig($iface,$status);
     } else {
         $errors = validateDHCPInput();
         if (empty($errors)) {
@@ -203,7 +205,7 @@ function updateDnsmasqConfig($iface,$status)
         $ip = $staticLeases[$i]['ip'];
         $comment = $staticLeases[$i]['comment'];
         $config .= "dhcp-host=$mac,$ip # $comment".PHP_EOL;
-    } 
+    }
     if ($_POST['no-resolv'] == "1") {
         $config .= "no-resolv".PHP_EOL;
     }

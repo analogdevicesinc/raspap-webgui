@@ -12,7 +12,7 @@
     <div class="form-group col-md-6">
       <div class="btn-group" data-toggle="buttons">
         <label class="btn btn-light active" checked onclick="setDHCPToggles(false)">
-          <input type="radio" name="adapter-ip" id="chkdhcp" autocomplete="off"> DHCP
+          <input type="radio" name="adapter-ip" value="dhcp" id="chkdhcp" autocomplete="off"> DHCP
         </label>
         <label class="btn btn-light" onclick="setDHCPToggles(true)">
           <input type="radio" name="adapter-ip" id="chkstatic" autocomplete="off"> Static IP
@@ -81,7 +81,7 @@
       </div>
      </div>
   </div>
-  
+
   <div class="row">
     <div class="form-group col-md-6">
       <label for="code"><?php echo _("Starting IP Address"); ?></label>
